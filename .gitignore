@@ -39,3 +39,20 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE files
+# JetBrains (WebStorm, IntelliJ IDEA, etc.)
+*.iml
+.idea/
+*.ipr
+*.iws
+.idea/vcs.xml
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
