@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -12,8 +13,11 @@ import { Separator } from "@/components/ui/separator"
 import { Eye, EyeOff, Briefcase, Mail, Lock, AlertCircle, ArrowRight, User } from "lucide-react"
 import Link from "next/link"
 import { JobSeekerHero } from "@/components/jobSeekerHero"
+import { signUpWithEmail, type SignupData } from "@/lib/auth"
+import { PublicLayout } from "@/components/layouts/PublicLayout"
 
 export default function SignupPage() {
+  const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -40,14 +44,23 @@ export default function SignupPage() {
       return
     }
 
-    // Simulate API call
+    // Validate password length
+    if (formData.password.length < 6) {
+      setError("Password should be at least 6 characters long.")
+      setIsLoading(false)
+      return
+    }
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-      // Handle successful registration here
-      console.log("Registration successful", formData)
-    } catch (err) {
-      setError("Registration failed. Please try again.")
-      console.error(err)
+      // Create user with Firebase
+      const userCredential = await signUpWithEmail(formData as SignupData)
+      console.log("Registration successful", userCredential.user)
+      
+      // Redirect to dashboard after successful signup
+      router.push("/dashboard")
+    } catch (err: any) {
+      setError(err.message || "Registration failed. Please try again.")
+      console.error("Registration error:", err)
     } finally {
       setIsLoading(false)
     }
@@ -59,12 +72,13 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 flex">
-      <JobSeekerHero />
+    <PublicLayout>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 flex">
+        <JobSeekerHero />
 
-      {/* Right Side - Registration Form */}
-      <div className="flex-1 flex items-center justify-center p-4 lg:p-8">
-        <div className="w-full max-w-md">
+        {/* Right Side - Registration Form */}
+        <div className="flex-1 flex items-center justify-center p-4 lg:p-8">
+          <div className="w-full max-w-md">
           {/* Mobile Header */}
           <div className="text-center mb-8 lg:hidden">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-900 rounded-2xl mb-4">
@@ -331,6 +345,7 @@ export default function SignupPage() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </PublicLayout>
   )
 }

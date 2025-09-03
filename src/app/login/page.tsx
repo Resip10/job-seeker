@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -12,8 +13,11 @@ import { Separator } from "@/components/ui/separator"
 import { Eye, EyeOff, Briefcase, Mail, Lock, AlertCircle, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { JobSeekerHero } from "@/components/jobSeekerHero"
+import { signInWithEmail, type LoginData } from "@/lib/auth"
+import { PublicLayout } from "@/components/layouts/PublicLayout"
 
 export default function LoginPage() {
+  const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
@@ -28,14 +32,16 @@ export default function LoginPage() {
     setIsLoading(true)
     setError("")
 
-    // Simulate API call
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-      // Handle successful login here
-      console.log("Login successful", formData)
-    } catch (err) {
-      setError("Invalid email or password. Please try again.")
-      console.error("Login error:", err);
+      // Sign in with Firebase
+      const userCredential = await signInWithEmail(formData as LoginData)
+      console.log("Login successful", userCredential.user)
+      
+      // Redirect to dashboard after successful login
+      router.push("/dashboard")
+    } catch (err: any) {
+      setError(err.message || "Invalid email or password. Please try again.")
+      console.error("Login error:", err)
     } finally {
       setIsLoading(false)
     }
@@ -47,41 +53,42 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 flex">
-      <JobSeekerHero />
+    <PublicLayout>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 flex">
+        <JobSeekerHero />
 
-      {/* Right Side - Login Form */}
-      <div className="flex-1 flex items-center justify-center p-4 lg:p-8">
-        <div className="w-full max-w-md">
-          {/* Mobile Header */}
-          <div className="text-center mb-8 lg:hidden">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-900 rounded-2xl mb-4">
-              <Briefcase className="w-8 h-8 text-white" />
+        {/* Right Side - Login Form */}
+        <div className="flex-1 flex items-center justify-center p-4 lg:p-8">
+          <div className="w-full max-w-md">
+            {/* Mobile Header */}
+            <div className="text-center mb-8 lg:hidden">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-900 rounded-2xl mb-4">
+                <Briefcase className="w-8 h-8 text-white" />
+              </div>
+              <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome Back</h1>
+              <p className="text-slate-600">Sign in to continue your job search</p>
             </div>
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome Back</h1>
-            <p className="text-slate-600">Sign in to continue your job search</p>
-          </div>
 
-          <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
-            <CardHeader className="space-y-1 pb-6">
-              <CardTitle className="text-2xl font-semibold text-slate-900 hidden lg:block">Welcome Back</CardTitle>
-              <CardDescription className="text-slate-600 hidden lg:block">
-                Sign in to access your job seeker dashboard
-              </CardDescription>
-              <CardTitle className="text-xl font-semibold text-slate-900 lg:hidden">Sign In</CardTitle>
-            </CardHeader>
+            <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
+              <CardHeader className="space-y-1 pb-6">
+                <CardTitle className="text-2xl font-semibold text-slate-900 hidden lg:block">Welcome Back</CardTitle>
+                <CardDescription className="text-slate-600 hidden lg:block">
+                  Sign in to access your job seeker dashboard
+                </CardDescription>
+                <CardTitle className="text-xl font-semibold text-slate-900 lg:hidden">Sign In</CardTitle>
+              </CardHeader>
 
-            <CardContent className="space-y-6">
-              {error && (
-                <Alert variant="destructive" className="border-red-200 bg-red-50/80 backdrop-blur-sm">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
+              <CardContent className="space-y-6">
+                {error && (
+                  <Alert variant="destructive" className="border-red-200 bg-red-50/80 backdrop-blur-sm">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
 
-              <form onSubmit={handleSubmit} className="space-y-5">
-                {/* Email Field */}
-                <div className="space-y-2">
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  {/* Email Field */}
+                  <div className="space-y-2">
                   <Label htmlFor="email" className="text-sm font-medium text-slate-700">
                     Email Address
                   </Label>
@@ -240,6 +247,7 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </PublicLayout>
   )
 }
