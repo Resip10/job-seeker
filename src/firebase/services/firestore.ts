@@ -5,181 +5,121 @@ import {
   getDocs, 
   query, 
   where, 
+  orderBy,
   doc, 
   updateDoc, 
   deleteDoc, 
-  Timestamp,
-  writeBatch
+  Timestamp
 } from "firebase/firestore";
 import app from '@/firebase/config';
+import { Job, Resume, ResumeDoc, Profile, ProfileDoc } from './types';
 
-// Import local utilities and types
-import { 
-  IJobData, 
-  IJobDoc, 
-  IJobQueryOptions, 
-  IJobBatchOperation 
-} from './types';
-import { COLLECTIONS } from './constants';
-import { handleFirestoreError } from './error-handling';
-import { validateJobData, validateJobId, validateUserId, validateBatchOperations } from './validation';
-import { 
-  extractJobData, 
-  buildQueryConstraints, 
-  extractJobsFromSnapshot,
-  validateBatchOperation,
-  createIdQuery,
-  isQueryEmpty,
-  getFirstDocument,
-  getQuerySize
-} from './utils';
-
-// Database instance
 const db = getFirestore(app);
 
-// Main CRUD operations
-export const createJob = async (
-  job: Omit<IJobData, 'createdAt' | 'updatedAt'>, 
-  userId: string
-): Promise<IJobDoc> => {
-  try {
-    validateJobData(job);
-    validateUserId(userId);
-    
-    const newJob: IJobData = {
-      ...job,
-      userId,
-      createdAt: Timestamp.now(),
-      updatedAt: Timestamp.now(),
-    };
-    
-    const docRef = await addDoc(collection(db, COLLECTIONS.JOBS), newJob);
-    return { id: docRef.id, ...newJob };
-  } catch (error) {
-    return handleFirestoreError(error, 'job creation');
-  }
+// Create a new job
+export const createJob = async (job: Omit<Job, 'id' | 'createdAt' | 'updatedAt'>): Promise<Job> => {
+  const newJob = {
+    ...job,
+    createdAt: Timestamp.now(),
+    updatedAt: Timestamp.now(),
+  };
+  
+  const docRef = await addDoc(collection(db, 'jobs'), newJob);
+  return { id: docRef.id, ...newJob };
 };
 
-export const getJobsByUserId = async (
-  userId: string, 
-  options: IJobQueryOptions = {}
-): Promise<IJobDoc[]> => {
-  try {
-    validateUserId(userId);
-
-    const jobsRef = collection(db, COLLECTIONS.JOBS);
-    const constraints = buildQueryConstraints(userId, options);
-    const q = query(jobsRef, ...constraints);
-    const querySnapshot = await getDocs(q);
-    
-    return extractJobsFromSnapshot(querySnapshot);
-  } catch (error) {
-    return handleFirestoreError(error, 'job retrieval');
-  }
+// Get all jobs for a user
+export const getJobsByUserId = async (userId: string): Promise<Job[]> => {
+  const jobsRef = collection(db, 'jobs');
+  const q = query(jobsRef, where("userId", "==", userId));
+  const querySnapshot = await getDocs(q);
+  
+  return querySnapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  } as Job));
 };
 
-export const updateJob = async (
-  jobId: string, 
-  updates: Partial<IJobData>
-): Promise<void> => {
-  try {
-    validateJobId(jobId);
-    
-    const jobRef = doc(db, COLLECTIONS.JOBS, jobId);
-    const updateData = { 
-      ...updates, 
-      updatedAt: Timestamp.now() 
-    };
-    
-    await updateDoc(jobRef, updateData);
-  } catch (error) {
-    return handleFirestoreError(error, 'job update');
-  }
+// Update a job
+export const updateJob = async (jobId: string, updates: Partial<Job>): Promise<void> => {
+  const jobRef = doc(db, 'jobs', jobId);
+  await updateDoc(jobRef, {
+    ...updates,
+    updatedAt: Timestamp.now()
+  });
 };
 
+// Delete a job
 export const deleteJob = async (jobId: string): Promise<void> => {
-  try {
-    validateJobId(jobId);
-    
-    const jobRef = doc(db, COLLECTIONS.JOBS, jobId);
-    await deleteDoc(jobRef);
-  } catch (error) {
-    return handleFirestoreError(error, 'job deletion');
-  }
+  const jobRef = doc(db, 'jobs', jobId);
+  await deleteDoc(jobRef);
 };
 
-// Advanced operations
-export const batchJobOperations = async (operations: IJobBatchOperation[]): Promise<void> => {
-  try {
-    validateBatchOperations(operations);
-    
-    const batch = writeBatch(db);
-    
-    operations.forEach((operation) => {
-      validateBatchOperation(operation);
-      
-      switch (operation.type) {
-        case 'create':
-          const newJob: IJobData = {
-            ...operation.data!,
-            createdAt: Timestamp.now(),
-            updatedAt: Timestamp.now(),
-          };
-          const docRef = doc(collection(db, COLLECTIONS.JOBS));
-          batch.set(docRef, newJob);
-          break;
-          
-        case 'update':
-          const updateRef = doc(db, COLLECTIONS.JOBS, operation.id!);
-          batch.update(updateRef, { 
-            ...operation.updates!, 
-            updatedAt: Timestamp.now() 
-          });
-          break;
-          
-        case 'delete':
-          const deleteRef = doc(db, COLLECTIONS.JOBS, operation.id!);
-          batch.delete(deleteRef);
-          break;
-      }
-    });
-    
-    await batch.commit();
-  } catch (error) {
-    return handleFirestoreError(error, 'batch operations');
-  }
+// Resume services
+export const createResume = async (resume: Omit<Resume, 'id' | 'uploadedAt'>): Promise<ResumeDoc> => {
+  const newResume = {
+    ...resume,
+    uploadedAt: Timestamp.now(),
+  };
+  
+  const docRef = await addDoc(collection(db, 'resumes'), newResume);
+  return { id: docRef.id, ...newResume };
 };
 
-export const getJobById = async (jobId: string): Promise<IJobDoc | null> => {
+export const getResumesByUserId = async (userId: string): Promise<ResumeDoc[]> => {
   try {
-    validateJobId(jobId);
-    
-    const jobsRef = collection(db, COLLECTIONS.JOBS);
-    const q = query(jobsRef, createIdQuery(COLLECTIONS.JOBS, jobId));
-    const jobSnap = await getDocs(q);
-    
-    if (isQueryEmpty(jobSnap)) {
-      return null;
-    }
-    
-    const firstDoc = getFirstDocument(jobSnap);
-    return firstDoc ? extractJobData(firstDoc) : null;
-  } catch (error) {
-    return handleFirestoreError(error, 'job retrieval by ID');
-  }
-};
-
-// Utility functions
-export const getJobsCount = async (userId: string): Promise<number> => {
-  try {
-    validateUserId(userId);
-    
-    const jobsRef = collection(db, COLLECTIONS.JOBS);
-    const q = query(jobsRef, where("userId", "==", userId));
+    const resumesRef = collection(db, 'resumes');
+    const q = query(resumesRef, where("userId", "==", userId), orderBy("uploadedAt", "desc"));
     const querySnapshot = await getDocs(q);
     
-    return getQuerySize(querySnapshot);
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    } as ResumeDoc));
   } catch (error) {
-    return handleFirestoreError(error, 'job count retrieval');
+    console.error('Error fetching resumes:', error);
+    return [];
   }
+};
+
+export const deleteResume = async (resumeId: string): Promise<void> => {
+  const resumeRef = doc(db, 'resumes', resumeId);
+  await deleteDoc(resumeRef);
+};
+
+// Profile services
+export const createProfile = async (profile: Omit<Profile, 'id' | 'createdAt'>): Promise<ProfileDoc> => {
+  const newProfile = {
+    ...profile,
+    createdAt: Timestamp.now(),
+  };
+  
+  const docRef = await addDoc(collection(db, 'profiles'), newProfile);
+  return { id: docRef.id, ...newProfile };
+};
+
+export const getProfilesByUserId = async (userId: string): Promise<ProfileDoc[]> => {
+  try {
+    const profilesRef = collection(db, 'profiles');
+    const q = query(profilesRef, where("userId", "==", userId), orderBy("createdAt", "desc"));
+    const querySnapshot = await getDocs(q);
+    
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    } as ProfileDoc));
+  } catch (error) {
+    console.error('Error fetching profiles:', error);
+    return [];
+  }
+};
+
+export const updateProfile = async (profileId: string, updates: Partial<Profile>): Promise<void> => {
+  const profileRef = doc(db, 'profiles', profileId);
+  await updateDoc(profileRef, updates);
+};
+
+export const deleteProfile = async (profileId: string): Promise<void> => {
+  const profileRef = doc(db, 'profiles', profileId);
+  await deleteDoc(profileRef);
 };

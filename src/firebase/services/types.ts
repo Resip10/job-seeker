@@ -1,63 +1,47 @@
-import { Timestamp, DocumentSnapshot } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 
-// Core job data interfaces
-export interface IJobData {
+// Simple types for MVP
+export interface User {
+  uid: string;
+  email: string;
+  displayName?: string;
+}
+
+export interface Job {
+  id?: string;
   userId: string;
   title: string;
   company: string;
-  link: string;
+  link?: string;
   status: string;
   notes?: string;
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
+  createdAt?: Timestamp;
+  updatedAt?: Timestamp;
 }
 
-export interface IJobDoc extends IJobData {
+// Resume types
+export interface Resume {
+  id?: string;
+  userId: string;
+  fileName: string;
+  fileUrl: string;
+  uploadedAt: Timestamp;
+}
+
+export interface ResumeDoc extends Resume {
   id: string;
 }
 
-// Query and filter interfaces
-export interface IJobFilters {
-  status?: string;
-  company?: string;
-}
-
-export interface IJobQueryOptions {
-  filters?: IJobFilters;
-  orderBy?: string;
-  orderDirection?: 'asc' | 'desc';
-  limit?: number;
-  startAfter?: DocumentSnapshot;
-}
-
-// Batch operation interfaces
-export interface IJobBatchOperation {
-  type: 'create' | 'update' | 'delete';
-  data?: Omit<IJobData, 'createdAt' | 'updatedAt'>;
+// Profile types
+export interface Profile {
   id?: string;
-  updates?: Partial<IJobData>;
+  userId: string;
+  platform: string;
+  profileUrl: string;
+  notes: string;
+  createdAt: Timestamp;
 }
 
-// Error handling
-export class FirestoreError extends Error {
-  constructor(
-    message: string,
-    public code: string,
-    public originalError?: unknown
-  ) {
-    super(message);
-    this.name = 'FirestoreError';
-  }
-}
-
-// Error codes enum for better type safety
-export enum FirestoreErrorCode {
-  PERMISSION_DENIED = 'permission-denied',
-  NOT_FOUND = 'not-found',
-  ALREADY_EXISTS = 'already-exists',
-  FAILED_PRECONDITION = 'failed-precondition',
-  UNAVAILABLE = 'unavailable',
-  INVALID_INPUT = 'invalid-input',
-  INVALID_DATA = 'invalid-data',
-  UNKNOWN = 'unknown'
+export interface ProfileDoc extends Profile {
+  id: string;
 }

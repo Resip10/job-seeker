@@ -9,7 +9,9 @@ import { Briefcase, LogOut, User, AlertCircle } from "lucide-react"
 import { signOutUser } from "@/lib/auth"
 import { PrivateLayout } from "@/components/layouts/PrivateLayout"
 import { JobsProvider, useJobs } from "@/contexts/JobsContext"
+import { ProfileProvider } from "@/contexts/ProfileContext"
 import { JobList } from "@/components/jobs/JobList"
+import { ProfileSection } from "@/components/profile/ProfileSection"
 
 function DashboardContent() {
   const router = useRouter()
@@ -80,6 +82,9 @@ function DashboardContent() {
           </Alert>
         )}
 
+        {/* Profile Section */}
+        <ProfileSection />
+
         {/* Jobs Management */}
         <JobList
           jobs={jobs}
@@ -96,9 +101,11 @@ function DashboardContent() {
 export default function DashboardPage() {
   return (
     <PrivateLayout>
-      <JobsProvider>
-        <DashboardContent />
-      </JobsProvider>
+      <ProfileProvider>
+        <JobsProvider>
+          <DashboardContent />
+        </JobsProvider>
+      </ProfileProvider>
     </PrivateLayout>
   )
 }

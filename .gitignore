@@ -52,7 +52,17 @@ next-env.d.ts
 .vscode/
 *.code-workspace
 
+# Cursor IDE
+.cursor/
+
 # Windows
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+
+# Firebase configuration files
+firebase.json
+firestore.rules
+firestore.indexes.json
+storage.rules
+.firebaserc
