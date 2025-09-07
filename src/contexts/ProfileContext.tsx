@@ -23,7 +23,6 @@ interface ProfileContextType {
   addProfile: (profile: Omit<ProfileDoc, 'id' | 'createdAt' | 'userId'>) => Promise<void>
   updateProfileById: (profileId: string, updates: Partial<ProfileDoc>) => Promise<void>
   deleteProfileById: (profileId: string) => Promise<void>
-  refreshProfiles: () => Promise<void>
 }
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined)
@@ -167,9 +166,6 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children }) =>
     }
   }, [])
 
-  const refreshProfiles = useCallback(async () => {
-    await loadProfiles()
-  }, [loadProfiles])
 
   const value: ProfileContextType = {
     resumes,
@@ -180,8 +176,7 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children }) =>
     deleteResumeById,
     addProfile,
     updateProfileById,
-    deleteProfileById,
-    refreshProfiles
+    deleteProfileById
   }
 
   return (

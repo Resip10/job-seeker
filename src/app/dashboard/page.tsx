@@ -1,9 +1,8 @@
 "use client"
 
-import type React from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Briefcase, LogOut, User, AlertCircle } from "lucide-react"
 import { signOutUser } from "@/lib/auth"

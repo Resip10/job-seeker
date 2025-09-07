@@ -19,6 +19,11 @@ export interface Job {
   updatedAt?: Timestamp;
 }
 
+export interface IJobDoc extends Job {
+  id: string;
+}
+
+
 // Resume types
 export interface Resume {
   id?: string;

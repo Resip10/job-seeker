@@ -8,17 +8,15 @@ import {
   updateJob, 
   deleteJob
 } from '@/firebase/services/firestore'
-import { IJobDoc, IJobQueryOptions } from '@/firebase/services/types'
+import { Job, IJobDoc } from '@/firebase/services/types'
 
 interface JobsContextType {
   jobs: IJobDoc[]
   loading: boolean
   error: string | null
-  addJob: (job: Omit<IJobDoc, 'id' | 'createdAt' | 'updatedAt' | 'userId'>) => Promise<void>
+  addJob: (job: Omit<Job, 'id' | 'createdAt' | 'updatedAt' | 'userId'>) => Promise<void>
   updateJobById: (jobId: string, updates: Partial<IJobDoc>) => Promise<void>
   deleteJobById: (jobId: string) => Promise<void>
-  refreshJobs: () => Promise<void>
-  getJobsWithFilters: (options: IJobQueryOptions) => Promise<IJobDoc[]>
 }
 
 const JobsContext = createContext<JobsContextType | undefined>(undefined)
@@ -68,14 +66,17 @@ export const JobsProvider: React.FC<JobsProviderProps> = ({ children }) => {
     }
   }, [user])
 
-  const addJob = useCallback(async (jobData: Omit<IJobDoc, 'id' | 'createdAt' | 'updatedAt' | 'userId'>) => {
+  const addJob = useCallback(async (jobData: Omit<Job, 'id' | 'createdAt' | 'updatedAt' | 'userId'>) => {
     if (!user) throw new Error('User not authenticated')
 
     setLoading(true)
     setError(null)
 
     try {
-      const newJob = await createJob(jobData as any, user.uid)
+      const newJob = await createJob({
+        ...jobData,
+        userId: user.uid
+      })
       setJobs(prev => [newJob, ...prev])
     } catch (err: any) {
       setError(err.message || 'Failed to add job')
@@ -119,20 +120,6 @@ export const JobsProvider: React.FC<JobsProviderProps> = ({ children }) => {
     }
   }, [])
 
-  const refreshJobs = useCallback(async () => {
-    await loadJobs()
-  }, [loadJobs])
-
-  const getJobsWithFilters = useCallback(async (options: IJobQueryOptions) => {
-    if (!user) return []
-
-    try {
-      return await getJobsByUserId(user.uid, options)
-    } catch (err: any) {
-      setError(err.message || 'Failed to filter jobs')
-      return []
-    }
-  }, [user])
 
   const value: JobsContextType = {
     jobs,
@@ -140,9 +127,7 @@ export const JobsProvider: React.FC<JobsProviderProps> = ({ children }) => {
     error,
     addJob,
     updateJobById,
-    deleteJobById,
-    refreshJobs,
-    getJobsWithFilters
+    deleteJobById
   }
 
   return (

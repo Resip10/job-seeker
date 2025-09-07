@@ -7,11 +7,11 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { X, Save, Plus } from "lucide-react"
-import { IJobData } from "@/firebase/services/types"
+import { IJobDoc } from "@/firebase/services/types"
 
 interface JobFormProps {
-  job?: IJobData | null
-  onSave: (job: Omit<IJobData, 'createdAt' | 'updatedAt' | 'userId'>) => Promise<void>
+  job?: IJobDoc | null
+  onSave: (job: Omit<IJobDoc, 'id' | 'createdAt' | 'updatedAt' | 'userId'>) => Promise<void>
   onCancel: () => void
   isLoading?: boolean
 }

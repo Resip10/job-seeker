@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { JobCard } from "./JobCard"
 import { JobForm } from "./JobForm"
-import { IJobDoc, IJobQueryOptions } from "@/firebase/services/types"
+import { IJobDoc } from "@/firebase/services/types"
 import { Plus, Search, Filter, X } from "lucide-react"
 
 interface JobListProps {
@@ -16,7 +16,6 @@ interface JobListProps {
   onUpdateJob: (jobId: string, updates: Partial<IJobDoc>) => Promise<void>
   onDeleteJob: (jobId: string) => Promise<void>
   isLoading?: boolean
-  onFilterChange?: (filters: IJobQueryOptions) => void
 }
 
 const STATUS_FILTERS = [
@@ -33,8 +32,7 @@ export function JobList({
   onAddJob, 
   onUpdateJob, 
   onDeleteJob, 
-  isLoading = false,
-  onFilterChange 
+  isLoading = false
 }: JobListProps) {
   const [showForm, setShowForm] = useState(false)
   const [editingJob, setEditingJob] = useState<IJobDoc | null>(null)
@@ -75,11 +73,6 @@ export function JobList({
 
   const handleStatusFilterChange = (value: string) => {
     setStatusFilter(value)
-    if (onFilterChange) {
-      onFilterChange({
-        filters: value ? { status: value } : undefined
-      })
-    }
   }
 
   // Filter jobs based on search term and status

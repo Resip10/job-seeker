@@ -12,12 +12,12 @@ import {
   Timestamp
 } from "firebase/firestore";
 import app from '@/firebase/config';
-import { Job, Resume, ResumeDoc, Profile, ProfileDoc } from './types';
+import { Job, IJobDoc, Resume, ResumeDoc, Profile, ProfileDoc } from './types';
 
 const db = getFirestore(app);
 
 // Create a new job
-export const createJob = async (job: Omit<Job, 'id' | 'createdAt' | 'updatedAt'>): Promise<Job> => {
+export const createJob = async (job: Omit<Job, 'id' | 'createdAt' | 'updatedAt'>): Promise<IJobDoc> => {
   const newJob = {
     ...job,
     createdAt: Timestamp.now(),
@@ -29,7 +29,7 @@ export const createJob = async (job: Omit<Job, 'id' | 'createdAt' | 'updatedAt'>
 };
 
 // Get all jobs for a user
-export const getJobsByUserId = async (userId: string): Promise<Job[]> => {
+export const getJobsByUserId = async (userId: string): Promise<IJobDoc[]> => {
   const jobsRef = collection(db, 'jobs');
   const q = query(jobsRef, where("userId", "==", userId));
   const querySnapshot = await getDocs(q);
@@ -37,7 +37,7 @@ export const getJobsByUserId = async (userId: string): Promise<Job[]> => {
   return querySnapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data()
-  } as Job));
+  } as IJobDoc));
 };
 
 // Update a job
