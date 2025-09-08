@@ -22,6 +22,7 @@ import { useProfile } from "@/contexts/ProfileContext"
 import { useAuth } from "@/contexts/AuthContext"
 import { uploadFile, generateUserFilePath } from "@/firebase/services/storage"
 import { formatDate } from "@/lib/utils/date"
+import { ProfileDoc } from "@/firebase/services/types"
 
 const PLATFORM_OPTIONS = [
   { value: 'LinkedIn', label: 'LinkedIn' },
@@ -90,9 +91,10 @@ export function ProfileSection() {
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as Error;
       console.error('Upload error:', err)
-      alert('Failed to upload resume: ' + err.message)
+      alert('Failed to upload resume: ' + error.message)
     } finally {
       setUploading(false)
     }
@@ -115,13 +117,14 @@ export function ProfileSection() {
       }
       setProfileForm({ platform: 'LinkedIn', profileUrl: '', notes: '' })
       setShowProfileForm(false)
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as Error;
       console.error('Profile error:', err)
-      alert('Failed to save profile: ' + err.message)
+      alert('Failed to save profile: ' + error.message)
     }
   }
 
-  const handleEditProfile = (profile: any) => {
+  const handleEditProfile = (profile: ProfileDoc) => {
     setEditingProfile(profile.id)
     setProfileForm({
       platform: profile.platform,
@@ -135,8 +138,9 @@ export function ProfileSection() {
     if (window.confirm('Are you sure you want to delete this resume?')) {
       try {
         await deleteResumeById(resumeId)
-      } catch (err: any) {
-        alert('Failed to delete resume: ' + err.message)
+      } catch (err: unknown) {
+        const error = err as Error;
+        alert('Failed to delete resume: ' + error.message)
       }
     }
   }
@@ -145,8 +149,9 @@ export function ProfileSection() {
     if (window.confirm('Are you sure you want to delete this profile link?')) {
       try {
         await deleteProfileById(profileId)
-      } catch (err: any) {
-        alert('Failed to delete profile: ' + err.message)
+      } catch (err: unknown) {
+        const error = err as Error;
+        alert('Failed to delete profile: ' + error.message)
       }
     }
   }
@@ -207,7 +212,7 @@ export function ProfileSection() {
 
           {resumes.length === 0 ? (
             <p className="text-slate-500 text-center py-4">
-              No resumes uploaded yet. Click "Upload Resume" to add your first resume.
+              No resumes uploaded yet. Click &quot;Upload Resume&quot; to add your first resume.
             </p>
           ) : (
             <div className="space-y-3">
@@ -343,7 +348,7 @@ export function ProfileSection() {
 
           {profiles.length === 0 ? (
             <p className="text-slate-500 text-center py-4">
-              No profile links added yet. Click "Add Profile" to add your first profile link.
+              No profile links added yet. Click &quot;Add Profile&quot; to add your first profile link.
             </p>
           ) : (
             <div className="space-y-3">
@@ -356,7 +361,7 @@ export function ProfileSection() {
                     <Link className="w-5 h-5 text-slate-500" />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <Badge variant="soft" color="blue">
+                        <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-200">
                           {profile.platform}
                         </Badge>
                         <a

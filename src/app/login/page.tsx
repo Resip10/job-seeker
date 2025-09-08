@@ -36,8 +36,9 @@ export default function LoginPage() {
       
       // Redirect to dashboard after successful login
       router.push("/dashboard")
-    } catch (err: any) {
-      setError(err.message || "Invalid email or password. Please try again.")
+    } catch (err: unknown) {
+      const error = err as Error;
+      setError(error.message || "Invalid email or password. Please try again.")
       console.error("Login error:", err)
     } finally {
       setIsLoading(false)
@@ -122,7 +123,7 @@ export default function LoginPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>

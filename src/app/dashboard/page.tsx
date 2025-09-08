@@ -1,12 +1,11 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Briefcase, LogOut, AlertCircle, Plus } from "lucide-react"
-import { signOutUser } from "@/lib/auth"
+import { AlertCircle, Plus } from "lucide-react"
 import { PrivateLayout } from "@/components/layouts/PrivateLayout"
+import { DashboardLayout } from "@/components/layouts/DashboardLayout"
 import { JobsProvider, useJobs } from "@/contexts/JobsContext"
 import { ProfileProvider } from "@/contexts/ProfileContext"
 import { useAuth } from "@/contexts/AuthContext"
@@ -18,21 +17,9 @@ import { IJobDoc } from "@/firebase/services/types"
 import { formatWeekdayDate, getTimeOfDay } from "@/lib/utils/date"
 
 function DashboardContent() {
-  const router = useRouter()
   const { user } = useAuth()
   const { jobs, loading, error, addJob, updateJobById, deleteJobById } = useJobs()
   const [showJobForm, setShowJobForm] = useState(false)
-  
-  const handleLogout = async () => {
-    try {
-      await signOutUser()
-      console.log("Logged out successfully")
-      router.push("/login")
-    } catch (error) {
-      console.error("Logout error:", error)
-      router.push("/login")
-    }
-  }
 
   // Get status counts for the welcome section
   const getStatusCounts = () => {
@@ -52,34 +39,10 @@ function DashboardContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-slate-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* App Title */}
-            <div className="flex items-center space-x-3">
-              <div className="inline-flex items-center justify-center w-10 h-10 bg-slate-900 rounded-xl">
-                <Briefcase className="w-6 h-6 text-white" />
-              </div>
-              <h1 className="text-xl font-bold text-slate-900">Job Seeker</h1>
-            </div>
-
-            {/* Logout Button */}
-            <Button
-              onClick={handleLogout}
-              variant="outline"
-              className="h-10 px-4 border-slate-200 hover:bg-slate-50 bg-white/50 backdrop-blur-sm transition-all duration-200 hover:shadow-md"
-            >
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <DashboardLayout>
+      <div className="h-full bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <div className="mb-6">
           {/* Date and Greeting Row */}
@@ -134,8 +97,9 @@ function DashboardContent() {
           onDeleteJob={deleteJobById}
           isLoading={loading}
         />
-      </main>
-    </div>
+        </div>
+      </div>
+    </DashboardLayout>
   )
 }
 

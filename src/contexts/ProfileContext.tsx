@@ -47,16 +47,6 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children }) =>
   const [error, setError] = useState<string | null>(null)
 
   // Load profiles when user changes
-  useEffect(() => {
-    if (user) {
-      loadProfiles()
-    } else {
-      setResumes([])
-      setProfiles([])
-      setError(null)
-    }
-  }, [user])
-
   const loadProfiles = useCallback(async () => {
     if (!user) return
 
@@ -70,12 +60,23 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children }) =>
       ])
       setResumes(userResumes)
       setProfiles(userProfiles)
-    } catch (err: any) {
-      setError(err.message || 'Failed to load profile data')
+    } catch (err: unknown) {
+      const error = err as Error;
+      setError(error.message || 'Failed to load profile data')
     } finally {
       setLoading(false)
     }
   }, [user])
+
+  useEffect(() => {
+    if (user) {
+      loadProfiles()
+    } else {
+      setResumes([])
+      setProfiles([])
+      setError(null)
+    }
+  }, [user, loadProfiles])
 
   const addResume = useCallback(async (resumeData: Omit<ResumeDoc, 'id' | 'uploadedAt' | 'userId'>) => {
     if (!user) throw new Error('User not authenticated')
@@ -89,8 +90,9 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children }) =>
         userId: user.uid
       })
       setResumes(prev => [newResume, ...prev])
-    } catch (err: any) {
-      setError(err.message || 'Failed to add resume')
+    } catch (err: unknown) {
+      const error = err as Error;
+      setError(error.message || 'Failed to add resume')
       throw err
     } finally {
       setLoading(false)
@@ -104,8 +106,9 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children }) =>
     try {
       await deleteResume(resumeId)
       setResumes(prev => prev.filter(resume => resume.id !== resumeId))
-    } catch (err: any) {
-      setError(err.message || 'Failed to delete resume')
+    } catch (err: unknown) {
+      const error = err as Error;
+      setError(error.message || 'Failed to delete resume')
       throw err
     } finally {
       setLoading(false)
@@ -124,8 +127,9 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children }) =>
         userId: user.uid
       })
       setProfiles(prev => [newProfile, ...prev])
-    } catch (err: any) {
-      setError(err.message || 'Failed to add profile')
+    } catch (err: unknown) {
+      const error = err as Error;
+      setError(error.message || 'Failed to add profile')
       throw err
     } finally {
       setLoading(false)
@@ -143,8 +147,9 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children }) =>
           ? { ...profile, ...updates }
           : profile
       ))
-    } catch (err: any) {
-      setError(err.message || 'Failed to update profile')
+    } catch (err: unknown) {
+      const error = err as Error;
+      setError(error.message || 'Failed to update profile')
       throw err
     } finally {
       setLoading(false)
@@ -158,8 +163,9 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children }) =>
     try {
       await deleteProfile(profileId)
       setProfiles(prev => prev.filter(profile => profile.id !== profileId))
-    } catch (err: any) {
-      setError(err.message || 'Failed to delete profile')
+    } catch (err: unknown) {
+      const error = err as Error;
+      setError(error.message || 'Failed to delete profile')
       throw err
     } finally {
       setLoading(false)

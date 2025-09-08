@@ -82,7 +82,7 @@ export function JobCard({ job, onEdit, onDelete, isLoading = false }: JobCardPro
               href={job.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-body text-primary hover:text-primary/80 hover:underline truncate"
+              className="text-body text-primary hover:text-primary/80 hover:underline truncate cursor-pointer"
             >
               View Job Posting
             </a>

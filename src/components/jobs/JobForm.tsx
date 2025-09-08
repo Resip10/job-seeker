@@ -54,8 +54,9 @@ export function JobForm({ job, onSave, onCancel, isLoading = false }: JobFormPro
 
     try {
       await onSave(formData)
-    } catch (err: any) {
-      setError(err.message || 'Failed to save job')
+    } catch (err: unknown) {
+      const error = err as Error;
+      setError(error.message || 'Failed to save job')
     }
   }
 
@@ -147,7 +148,7 @@ export function JobForm({ job, onSave, onCancel, isLoading = false }: JobFormPro
               id="status"
               value={formData.status}
               onChange={(e) => handleInputChange('status', e.target.value)}
-              className="w-full px-3 py-2 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent cursor-pointer"
             >
               {JOB_STATUSES.map(status => (
                 <option key={status.value} value={status.value}>

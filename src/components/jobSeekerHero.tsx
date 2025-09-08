@@ -46,7 +46,7 @@ export function JobSeekerHero() {
         {/* Testimonial */}
         <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
           <p className="text-slate-200 mb-4 italic">
-            "This platform completely transformed my job search. I found my dream role in just 2 weeks!"
+            &quot;This platform completely transformed my job search. I found my dream role in just 2 weeks!&quot;
           </p>
           <div className="flex items-center">
             <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">

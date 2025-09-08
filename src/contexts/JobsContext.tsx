@@ -9,6 +9,7 @@ import {
   deleteJob
 } from '@/firebase/services/firestore'
 import { Job, IJobDoc } from '@/firebase/services/types'
+import { Timestamp } from 'firebase/firestore'
 
 interface JobsContextType {
   jobs: IJobDoc[]
@@ -39,16 +40,6 @@ export const JobsProvider = ({ children }: JobsProviderProps) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Load jobs when user changes
-  useEffect(() => {
-    if (user) {
-      loadJobs()
-    } else {
-      setJobs([])
-      setError(null)
-    }
-  }, [user])
-
   const loadJobs = useCallback(async () => {
     if (!user) return
 
@@ -58,13 +49,24 @@ export const JobsProvider = ({ children }: JobsProviderProps) => {
     try {
       const userJobs = await getJobsByUserId(user.uid)
       setJobs(userJobs)
-    } catch (err: any) {
-      setError(err.message || 'Failed to load jobs')
+    } catch (err: unknown) {
+      const error = err as Error;
+      setError(error.message || 'Failed to load jobs')
       console.error('Error loading jobs:', err)
     } finally {
       setLoading(false)
     }
   }, [user])
+
+  // Load jobs when user changes
+  useEffect(() => {
+    if (user) {
+      loadJobs()
+    } else {
+      setJobs([])
+      setError(null)
+    }
+  }, [user, loadJobs])
 
   const addJob = useCallback(async (jobData: Omit<Job, 'id' | 'createdAt' | 'updatedAt' | 'userId'>) => {
     if (!user) throw new Error('User not authenticated')
@@ -78,8 +80,9 @@ export const JobsProvider = ({ children }: JobsProviderProps) => {
         userId: user.uid
       })
       setJobs(prev => [newJob, ...prev])
-    } catch (err: any) {
-      setError(err.message || 'Failed to add job')
+    } catch (err: unknown) {
+      const error = err as Error;
+      setError(error.message || 'Failed to add job')
       throw err
     } finally {
       setLoading(false)
@@ -94,11 +97,12 @@ export const JobsProvider = ({ children }: JobsProviderProps) => {
       await updateJob(jobId, updates)
       setJobs(prev => prev.map(job => 
         job.id === jobId 
-          ? { ...job, ...updates, updatedAt: new Date() as any }
+          ? { ...job, ...updates, updatedAt: Timestamp.now() }
           : job
       ))
-    } catch (err: any) {
-      setError(err.message || 'Failed to update job')
+    } catch (err: unknown) {
+      const error = err as Error;
+      setError(error.message || 'Failed to update job')
       throw err
     } finally {
       setLoading(false)
@@ -112,8 +116,9 @@ export const JobsProvider = ({ children }: JobsProviderProps) => {
     try {
       await deleteJob(jobId)
       setJobs(prev => prev.filter(job => job.id !== jobId))
-    } catch (err: any) {
-      setError(err.message || 'Failed to delete job')
+    } catch (err: unknown) {
+      const error = err as Error;
+      setError(error.message || 'Failed to delete job')
       throw err
     } finally {
       setLoading(false)

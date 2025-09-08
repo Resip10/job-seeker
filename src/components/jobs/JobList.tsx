@@ -127,7 +127,7 @@ export function JobList({
                 <select
                   value={statusFilter}
                   onChange={(e) => handleStatusFilterChange(e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-text-dark"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-text-dark cursor-pointer"
                 >
                   {STATUS_FILTERS.map(filter => (
                     <option key={filter.value} value={filter.value}>

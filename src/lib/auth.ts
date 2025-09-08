@@ -1,4 +1,4 @@
-import {createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, User, UserCredential} from "firebase/auth";
+import {createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, User, UserCredential, AuthError} from "firebase/auth";
 import {auth} from "@/firebase/config";
 
 export interface SignupData {
@@ -22,8 +22,9 @@ export const signUpWithEmail = async (signupData: SignupData): Promise<UserCrede
   try {
     const { email, password } = signupData;
     return await createUserWithEmailAndPassword(auth, email, password);
-  } catch (error: any) {
-    throw new Error(getAuthErrorMessage(error.code));
+  } catch (error: unknown) {
+    const authError = error as AuthError;
+    throw new Error(getAuthErrorMessage(authError.code));
   }
 };
 
@@ -32,8 +33,9 @@ export const signInWithEmail = async (loginData: LoginData): Promise<UserCredent
   try {
     const { email, password } = loginData;
     return await signInWithEmailAndPassword(auth, email, password);
-  } catch (error: any) {
-    throw new Error(getAuthErrorMessage(error.code));
+  } catch (error: unknown) {
+    const authError = error as AuthError;
+    throw new Error(getAuthErrorMessage(authError.code));
   }
 };
 
@@ -41,7 +43,8 @@ export const signInWithEmail = async (loginData: LoginData): Promise<UserCredent
 export const signOutUser = async (): Promise<void> => {
   try {
     await signOut(auth);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    console.error("Sign out error:", error);
     throw new Error("Failed to sign out. Please try again.");
   }
 };
