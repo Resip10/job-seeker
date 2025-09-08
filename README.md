@@ -26,11 +26,6 @@ A modern, responsive web application built for job seekers to manage their caree
 - **Custom Hooks** - Reusable logic for data fetching and state updates
 - **Context Providers** - JobsContext, ProfileContext, and AuthContext for organized state management
 
-### Development Tools
-- **ESLint** - Code linting
-- **PostCSS** - CSS processing
-- **Turbopack** - Fast bundler for development
-
 ## 📦 Installation
 
 1. **Clone the repository**
@@ -143,8 +138,13 @@ src/
 │   │   └── ProfileSection.tsx # Professional profiles management
 │   ├── layouts/          # Layout components
 │   │   ├── PrivateLayout.tsx  # Authenticated user layout
-│   │   └── PublicLayout.tsx   # Public pages layout
-│   ├── ui/               # Base UI components (Radix UI)
+│   │   ├── PublicLayout.tsx   # Public pages layout
+│   │   ├── DashboardLayout.tsx # Dashboard layout with sidebar
+│   │   └── Sidebar.tsx        # Collapsible navigation sidebar
+│   ├── dashboard/        # Dashboard-specific components
+│   │   ├── SummaryCard.tsx    # Job application statistics
+│   │   └── StatusItem.tsx     # Status indicator component
+│   ├── ui/               # Base UI components (shadcn/ui)
 │   └── jobSeekerHero.tsx # Landing page hero component
 ├── contexts/             # React Context providers
 │   ├── AuthContext.tsx   # Authentication state management
@@ -191,4 +191,4 @@ src/
 
 ---
 
-**Note**: This is a comprehensive job application management platform with authentication, file storage, profile management, and a modern user interface. Perfect for organizing and tracking your entire job search process!
+**Note**: This is a comprehensive job application management platform. Perfect for organizing and tracking your entire job search process!
