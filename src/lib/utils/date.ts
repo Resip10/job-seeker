@@ -143,3 +143,24 @@ export const isWithinDays = (timestamp: unknown, days: number): boolean => {
   const diffInDays = (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24)
   return diffInDays <= days
 };
+
+/**
+ * Formats a date to show weekday, day, and month (e.g., "Monday, 15 January")
+ */
+export const formatWeekdayDate = (date: Date = new Date()): string => {
+  return date.toLocaleDateString('en-US', { 
+    weekday: 'long', 
+    day: 'numeric', 
+    month: 'long' 
+  })
+};
+
+/**
+ * Gets the time of day period based on the current hour
+ */
+export const getTimeOfDay = (date: Date = new Date()): string => {
+  const hour = date.getHours()
+  if (hour < 12) return 'Morning'
+  if (hour < 18) return 'Afternoon'
+  return 'Evening'
+};

@@ -9,26 +9,48 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Design System Colors
+        // shadcn/ui theme colors using OKLCH
         primary: {
-          DEFAULT: "#4A6EED",
-          foreground: "#FFFFFF",
+          DEFAULT: "oklch(var(--primary))",
+          foreground: "oklch(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "#E6F0FF",
-          foreground: "#4A6EED",
+          DEFAULT: "oklch(var(--secondary))",
+          foreground: "oklch(var(--secondary-foreground))",
         },
-        background: "#F5F7FA",
-        surface: "#FFFFFF",
+        background: "oklch(var(--background))",
+        foreground: "oklch(var(--foreground))",
+        card: {
+          DEFAULT: "oklch(var(--card))",
+          foreground: "oklch(var(--card-foreground))",
+        },
+        popover: {
+          DEFAULT: "oklch(var(--popover))",
+          foreground: "oklch(var(--popover-foreground))",
+        },
+        muted: {
+          DEFAULT: "oklch(var(--muted))",
+          foreground: "oklch(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "oklch(var(--accent))",
+          foreground: "oklch(var(--accent-foreground))",
+        },
+        destructive: {
+          DEFAULT: "oklch(var(--destructive))",
+          foreground: "oklch(var(--destructive-foreground))",
+        },
+        border: "oklch(var(--border))",
+        input: "oklch(var(--input))",
+        ring: "oklch(var(--ring))",
+        // Additional design system colors for compatibility
+        success: "oklch(var(--success))",
+        warning: "oklch(var(--warning))",
         text: {
-          dark: "#1F2937",
-          medium: "#4B5563",
-          light: "#9CA3AF",
+          dark: "oklch(var(--text-dark))",
+          medium: "oklch(var(--text-medium))",
+          light: "oklch(var(--text-light))",
         },
-        border: "#E5E7EB",
-        success: "#34D399",
-        warning: "#F59E0B",
-        destructive: "#EF4444",
       },
       fontFamily: {
         sans: ["var(--font-inter)", "Inter", "sans-serif"],

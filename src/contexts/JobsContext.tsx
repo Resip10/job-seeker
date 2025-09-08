@@ -1,6 +1,6 @@
 "use client"
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { useAuth } from './AuthContext'
 import { 
   createJob, 
@@ -33,7 +33,7 @@ interface JobsProviderProps {
   children: React.ReactNode
 }
 
-export const JobsProvider: React.FC<JobsProviderProps> = ({ children }) => {
+export const JobsProvider = ({ children }: JobsProviderProps) => {
   const { user } = useAuth()
   const [jobs, setJobs] = useState<IJobDoc[]>([])
   const [loading, setLoading] = useState(false)

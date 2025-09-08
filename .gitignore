@@ -67,8 +67,5 @@ firestore.indexes.json
 storage.rules
 .firebaserc
 
-# Design system files
-design.system.json
-
 # Firebase debug files
 firebase-debug.log
