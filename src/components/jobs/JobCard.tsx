@@ -22,14 +22,25 @@ const STATUS_LABELS = {
   withdrawn: 'Withdrawn'
 }
 
-const getStatusColor = (status: string) => {
+const getStatusVariant = (status: string) => {
   switch (status) {
-    case 'applied': return 'blue'
-    case 'interview': return 'yellow'
-    case 'offer': return 'green'
-    case 'rejected': return 'red'
-    case 'withdrawn': return 'gray'
-    default: return 'gray'
+    case 'applied': return 'default'
+    case 'interview': return 'secondary'
+    case 'offer': return 'default'
+    case 'rejected': return 'destructive'
+    case 'withdrawn': return 'outline'
+    default: return 'outline'
+  }
+}
+
+const getStatusClassName = (status: string) => {
+  switch (status) {
+    case 'applied': return 'bg-primary/10 text-primary border-primary/20'
+    case 'interview': return 'bg-warning/10 text-warning border-warning/20'
+    case 'offer': return 'bg-success/10 text-success border-success/20'
+    case 'rejected': return 'bg-destructive/10 text-destructive border-destructive/20'
+    case 'withdrawn': return 'bg-text-light/10 text-text-light border-text-light/20'
+    default: return 'bg-text-light/10 text-text-light border-text-light/20'
   }
 }
 
@@ -41,22 +52,21 @@ export function JobCard({ job, onEdit, onDelete, isLoading = false }: JobCardPro
   }
 
   return (
-    <Card className="hover:shadow-md transition-shadow duration-200">
+    <Card className="hover:shadow-card transition-shadow duration-200">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
-            <CardTitle className="text-lg font-semibold text-slate-900 truncate">
+            <CardTitle className="text-h3 text-text-dark truncate">
               {job.title}
             </CardTitle>
             <CardDescription className="flex items-center gap-1 mt-1">
-              <Building2 className="w-4 h-4 text-slate-500" />
-              <span className="truncate">{job.company}</span>
+              <Building2 className="w-4 h-4 text-text-light" />
+              <span className="truncate text-text-medium">{job.company}</span>
             </CardDescription>
           </div>
           <Badge 
-            variant="soft"
-            color={getStatusColor(job.status)}
-            className="ml-2"
+            variant={getStatusVariant(job.status)}
+            className={`ml-2 ${getStatusClassName(job.status)}`}
           >
             {STATUS_LABELS[job.status as keyof typeof STATUS_LABELS] || job.status}
           </Badge>
@@ -67,12 +77,12 @@ export function JobCard({ job, onEdit, onDelete, isLoading = false }: JobCardPro
         <div className="space-y-3">
           {/* Job Link */}
           <div className="flex items-center gap-2">
-            <ExternalLink className="w-4 h-4 text-slate-500" />
+            <ExternalLink className="w-4 h-4 text-text-light" />
             <a
               href={job.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-blue-600 hover:text-blue-800 hover:underline truncate"
+              className="text-body text-primary hover:text-primary/80 hover:underline truncate"
             >
               View Job Posting
             </a>
@@ -81,13 +91,13 @@ export function JobCard({ job, onEdit, onDelete, isLoading = false }: JobCardPro
           {/* Notes */}
           {job.notes && (
             <div className="flex items-start gap-2">
-              <FileText className="w-4 h-4 text-slate-500 mt-0.5" />
-              <p className="text-sm text-slate-600 line-clamp-2">{job.notes}</p>
+              <FileText className="w-4 h-4 text-text-light mt-0.5" />
+              <p className="text-body text-text-medium line-clamp-2">{job.notes}</p>
             </div>
           )}
 
           {/* Dates */}
-          <div className="flex items-center gap-4 text-xs text-slate-500">
+          <div className="flex items-center gap-4 text-caption text-text-light">
             <div className="flex items-center gap-1">
               <Calendar className="w-3 h-3" />
               <span>Created: {formatDate(job.createdAt)}</span>
@@ -101,7 +111,7 @@ export function JobCard({ job, onEdit, onDelete, isLoading = false }: JobCardPro
           </div>
 
           {/* Actions */}
-          <div className="flex gap-2 pt-2 border-t border-slate-100">
+          <div className="flex gap-2 pt-2 border-t border-border">
             <Button
               variant="outline"
               size="sm"
@@ -117,7 +127,7 @@ export function JobCard({ job, onEdit, onDelete, isLoading = false }: JobCardPro
               size="sm"
               onClick={handleDelete}
               disabled={isLoading}
-              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+              className="text-destructive hover:text-destructive/80 hover:bg-destructive/10"
             >
               <Trash2 className="w-3 h-3 mr-1" />
               Delete

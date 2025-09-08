@@ -11,7 +11,7 @@ A modern, responsive web application built for job seekers to manage their caree
 - **Tailwind** - Utility-first CSS framework
 
 ### UI Components
-- **Radix UI** - Accessible component primitives and themes
+- **shadcn/ui** - Beautifully designed, accessible components built with Radix UI primitives
 - **Lucide React** - Beautiful icons
 - **Class Variance Authority** - Component variant management
 
