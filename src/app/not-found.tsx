@@ -1,16 +1,13 @@
 "use client"
 
-// TODO: Create a proper landing page instead of redirecting to login
-// The landing page should showcase the job seeker app features and benefits
-// Include hero section, features, testimonials, and call-to-action buttons
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 
-export default function Home() {
+export default function NotFound() {
   const router = useRouter()
 
   useEffect(() => {
-    // Redirect root path to login page
+    // Redirect to login page for any 404
     router.replace("/login")
   }, [router])
 
