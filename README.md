@@ -30,6 +30,13 @@ A modern, responsive web application built for job seekers to manage their caree
 - **Custom Hooks** - Reusable logic for data fetching and state updates
 - **Context Providers** - JobsContext, ProfileContext, and AuthContext for organized state management
 
+### Development Tools & Code Quality
+
+- **ESLint** - Advanced linting with TypeScript, React, and accessibility rules
+- **Prettier** - Code formatting for consistent style across the project
+- **Husky** - Git hooks for pre-commit code quality checks
+- **lint-staged** - Run linters only on staged files for faster commits
+
 ## 📦 Installation
 
 1. **Clone the repository**
@@ -68,12 +75,17 @@ A modern, responsive web application built for job seekers to manage their caree
 
 ## 📜 Available Scripts
 
-| Command         | Description                             |
-| --------------- | --------------------------------------- |
-| `npm run dev`   | Start development server with Turbopack |
-| `npm run build` | Build the application for production    |
-| `npm run start` | Start the production server             |
-| `npm run lint`  | Run ESLint to check for code issues     |
+| Command                | Description                                     |
+| ---------------------- | ----------------------------------------------- |
+| `npm run dev`          | Start development server with Turbopack         |
+| `npm run build`        | Build the application for production            |
+| `npm run start`        | Start the production server                     |
+| `npm run lint`         | Run ESLint to check for code issues             |
+| `npm run lint:fix`     | Run ESLint and automatically fix issues         |
+| `npm run format`       | Format all files with Prettier                  |
+| `npm run format:check` | Check if files are formatted correctly          |
+| `npm run type-check`   | Run TypeScript type checking                    |
+| `npm run check-all`    | Run type-check, lint, and format-check together |
 
 ## 🔧 Configuration
 
@@ -178,6 +190,17 @@ src/
 │       ├── validation.ts # Form validation utilities
 │       └── error-handling.ts # Error handling utilities
 └── types/                # Global TypeScript type definitions
+
+# Configuration Files
+├── .prettierrc           # Prettier code formatting configuration
+├── .prettierignore       # Files to ignore for Prettier formatting
+├── .lintstagedrc.json    # lint-staged configuration for pre-commit hooks
+├── .husky/               # Git hooks directory
+│   └── pre-commit        # Pre-commit hook for code quality checks
+├── eslint.config.mjs     # ESLint configuration with strict rules
+├── tailwind.config.ts    # Tailwind CSS configuration
+├── tsconfig.json         # TypeScript configuration
+└── package.json          # Dependencies and scripts
 ```
 
 ## 🚀 Getting Started
@@ -202,6 +225,25 @@ src/
 3. **Upload Resumes** - Store different versions of your resume
 4. **Manage Profiles** - Add your professional profile links
 5. **Track Progress** - Monitor your application status and statistics
+
+## 🔄 Development Workflow
+
+### Code Quality Checks
+
+Before committing, the following checks run automatically:
+
+- **TypeScript compilation** - Ensures type safety
+- **ESLint** - Catches code quality issues and enforces best practices
+- **Prettier** - Formats code consistently
+
+### Pre-commit Hooks
+
+The project uses Husky and lint-staged to automatically:
+
+- Run ESLint on staged files
+- Format code with Prettier
+- Prevent commits with TypeScript errors
+- Ensure consistent code quality across the team
 
 ---
 
