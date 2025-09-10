@@ -1,4 +1,10 @@
-import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from 'firebase/storage';
 import app from '@/firebase/config';
 
 const storage = getStorage(app);
@@ -18,7 +24,10 @@ export const deleteFile = async (path: string): Promise<void> => {
 };
 
 // Generate unique file path for user uploads
-export const generateUserFilePath = (userId: string, fileName: string): string => {
+export const generateUserFilePath = (
+  userId: string,
+  fileName: string
+): string => {
   const timestamp = Date.now();
   const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_');
   return `resumes/${userId}/${timestamp}_${sanitizedFileName}`;

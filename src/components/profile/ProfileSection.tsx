@@ -1,166 +1,172 @@
-"use client"
+'use client';
 
-import React, { useState, useRef } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Badge } from "@/components/ui/badge"
-import { 
-  Upload, 
-  FileText, 
-  Link, 
-  Plus, 
-  Edit, 
-  Trash2, 
+import React, { useState, useRef } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import {
+  Upload,
+  FileText,
+  Link,
+  Plus,
+  Edit,
+  Trash2,
   ExternalLink,
   X,
-  Save
-} from "lucide-react"
-import { useProfile } from "@/contexts/ProfileContext"
-import { useAuth } from "@/contexts/AuthContext"
-import { uploadFile, generateUserFilePath } from "@/firebase/services/storage"
-import { formatDate } from "@/lib/utils/date"
-import { ProfileDoc } from "@/firebase/services/types"
+  Save,
+} from 'lucide-react';
+import { useProfile } from '@/contexts/ProfileContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { uploadFile, generateUserFilePath } from '@/firebase/services/storage';
+import { formatDate } from '@/lib/utils/date';
+import { ProfileDoc } from '@/firebase/services/types';
 
 const PLATFORM_OPTIONS = [
   { value: 'LinkedIn', label: 'LinkedIn' },
   { value: 'GitHub', label: 'GitHub' },
   { value: 'Portfolio', label: 'Portfolio' },
   { value: 'Twitter', label: 'Twitter' },
-  { value: 'Other', label: 'Other' }
-]
+  { value: 'Other', label: 'Other' },
+];
 
 export function ProfileSection() {
-  const { user } = useAuth()
-  const { 
-    resumes, 
-    profiles, 
-    loading, 
-    error, 
-    addResume, 
-    deleteResumeById, 
-    addProfile, 
-    updateProfileById, 
-    deleteProfileById 
-  } = useProfile()
-  
-  const [showResumeForm, setShowResumeForm] = useState(false)
-  const [showProfileForm, setShowProfileForm] = useState(false)
-  const [editingProfile, setEditingProfile] = useState<string | null>(null)
-  const [uploading, setUploading] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  
+  const { user } = useAuth();
+  const {
+    resumes,
+    profiles,
+    loading,
+    error,
+    addResume,
+    deleteResumeById,
+    addProfile,
+    updateProfileById,
+    deleteProfileById,
+  } = useProfile();
+
+  const [showResumeForm, setShowResumeForm] = useState(false);
+  const [showProfileForm, setShowProfileForm] = useState(false);
+  const [editingProfile, setEditingProfile] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [profileForm, setProfileForm] = useState({
     platform: 'LinkedIn',
     profileUrl: '',
-    notes: ''
-  })
+    notes: '',
+  });
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
     // Validate file type
     if (file.type !== 'application/pdf') {
-      alert('Please upload a PDF file')
-      return
+      alert('Please upload a PDF file');
+      return;
     }
 
     // Validate file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
-      alert('File size must be less than 5MB')
-      return
+      alert('File size must be less than 5MB');
+      return;
     }
 
-    setUploading(true)
+    setUploading(true);
     try {
       if (!user) {
-        alert('You must be logged in to upload files')
-        return
+        alert('You must be logged in to upload files');
+        return;
       }
-      
-      const filePath = generateUserFilePath(user.uid, file.name)
-      const fileUrl = await uploadFile(file, filePath)
+
+      const filePath = generateUserFilePath(user.uid, file.name);
+      const fileUrl = await uploadFile(file, filePath);
       await addResume({
         fileName: file.name,
-        fileUrl
-      })
-      setShowResumeForm(false)
+        fileUrl,
+      });
+      setShowResumeForm(false);
       if (fileInputRef.current) {
-        fileInputRef.current.value = ''
+        fileInputRef.current.value = '';
       }
     } catch (err: unknown) {
       const error = err as Error;
-      console.error('Upload error:', err)
-      alert('Failed to upload resume: ' + error.message)
+      alert(`Failed to upload resume: ${error.message}`);
     } finally {
-      setUploading(false)
+      setUploading(false);
     }
-  }
+  };
 
   const handleProfileSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (!profileForm.profileUrl.trim()) {
-      alert('Profile URL is required')
-      return
+      alert('Profile URL is required');
+      return;
     }
 
     try {
       if (editingProfile) {
-        await updateProfileById(editingProfile, profileForm)
-        setEditingProfile(null)
+        await updateProfileById(editingProfile, profileForm);
+        setEditingProfile(null);
       } else {
-        await addProfile(profileForm)
+        await addProfile(profileForm);
       }
-      setProfileForm({ platform: 'LinkedIn', profileUrl: '', notes: '' })
-      setShowProfileForm(false)
+      setProfileForm({ platform: 'LinkedIn', profileUrl: '', notes: '' });
+      setShowProfileForm(false);
     } catch (err: unknown) {
       const error = err as Error;
-      console.error('Profile error:', err)
-      alert('Failed to save profile: ' + error.message)
+      alert(`Failed to save profile: ${error.message}`);
     }
-  }
+  };
 
   const handleEditProfile = (profile: ProfileDoc) => {
-    setEditingProfile(profile.id)
+    setEditingProfile(profile.id);
     setProfileForm({
       platform: profile.platform,
       profileUrl: profile.profileUrl,
-      notes: profile.notes
-    })
-    setShowProfileForm(true)
-  }
+      notes: profile.notes,
+    });
+    setShowProfileForm(true);
+  };
 
   const handleDeleteResume = async (resumeId: string) => {
     if (window.confirm('Are you sure you want to delete this resume?')) {
       try {
-        await deleteResumeById(resumeId)
+        await deleteResumeById(resumeId);
       } catch (err: unknown) {
         const error = err as Error;
-        alert('Failed to delete resume: ' + error.message)
+        alert(`Failed to delete resume: ${error.message}`);
       }
     }
-  }
+  };
 
   const handleDeleteProfile = async (profileId: string) => {
     if (window.confirm('Are you sure you want to delete this profile link?')) {
       try {
-        await deleteProfileById(profileId)
+        await deleteProfileById(profileId);
       } catch (err: unknown) {
         const error = err as Error;
-        alert('Failed to delete profile: ' + error.message)
+        alert(`Failed to delete profile: ${error.message}`);
       }
     }
-  }
+  };
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Error Display */}
       {error && (
-        <Alert variant="destructive">
+        <Alert variant='destructive'>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
@@ -168,10 +174,10 @@ export function ProfileSection() {
       {/* Resume Section */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className='flex items-center justify-between'>
             <div>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="w-5 h-5" />
+              <CardTitle className='flex items-center gap-2'>
+                <FileText className='w-5 h-5' />
                 Resume
               </CardTitle>
               <CardDescription>
@@ -180,10 +186,10 @@ export function ProfileSection() {
             </div>
             <Button
               onClick={() => setShowResumeForm(!showResumeForm)}
-              variant="outline"
-              size="sm"
+              variant='outline'
+              size='sm'
             >
-              <Upload className="w-4 h-4 mr-2" />
+              <Upload className='w-4 h-4 mr-2' />
               Upload Resume
             </Button>
           </div>
@@ -191,60 +197,63 @@ export function ProfileSection() {
 
         <CardContent>
           {showResumeForm && (
-            <div className="mb-4 p-4 border border-slate-200 rounded-lg bg-slate-50">
-              <Label htmlFor="resume-upload" className="block mb-2">
+            <div className='mb-4 p-4 border border-slate-200 rounded-lg bg-slate-50'>
+              <Label htmlFor='resume-upload' className='block mb-2'>
                 Select PDF Resume
               </Label>
               <input
                 ref={fileInputRef}
-                id="resume-upload"
-                type="file"
-                accept=".pdf"
+                id='resume-upload'
+                type='file'
+                accept='.pdf'
                 onChange={handleFileUpload}
                 disabled={uploading}
-                className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                className='block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100'
               />
               {uploading && (
-                <p className="text-sm text-slate-600 mt-2">Uploading...</p>
+                <p className='text-sm text-slate-600 mt-2'>Uploading...</p>
               )}
             </div>
           )}
 
           {resumes.length === 0 ? (
-            <p className="text-slate-500 text-center py-4">
-              No resumes uploaded yet. Click &quot;Upload Resume&quot; to add your first resume.
+            <p className='text-slate-500 text-center py-4'>
+              No resumes uploaded yet. Click &quot;Upload Resume&quot; to add
+              your first resume.
             </p>
           ) : (
-            <div className="space-y-3">
-              {resumes.map((resume) => (
+            <div className='space-y-3'>
+              {resumes.map(resume => (
                 <div
                   key={resume.id}
-                  className="flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50"
+                  className='flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50'
                 >
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-5 h-5 text-slate-500" />
+                  <div className='flex items-center gap-3'>
+                    <FileText className='w-5 h-5 text-slate-500' />
                     <div>
-                      <p className="font-medium text-slate-900">{resume.fileName}</p>
-                      <p className="text-sm text-slate-500">
+                      <p className='font-medium text-slate-900'>
+                        {resume.fileName}
+                      </p>
+                      <p className='text-sm text-slate-500'>
                         Uploaded {formatDate(resume.uploadedAt)}
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className='flex items-center gap-2'>
                     <Button
-                      variant="outline"
-                      size="sm"
+                      variant='outline'
+                      size='sm'
                       onClick={() => window.open(resume.fileUrl, '_blank')}
                     >
-                      <ExternalLink className="w-4 h-4" />
+                      <ExternalLink className='w-4 h-4' />
                     </Button>
                     <Button
-                      variant="outline"
-                      size="sm"
+                      variant='outline'
+                      size='sm'
                       onClick={() => handleDeleteResume(resume.id)}
-                      className="text-red-600 hover:text-red-700"
+                      className='text-red-600 hover:text-red-700'
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className='w-4 h-4' />
                     </Button>
                   </div>
                 </div>
@@ -257,10 +266,10 @@ export function ProfileSection() {
       {/* Profile Links Section */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className='flex items-center justify-between'>
             <div>
-              <CardTitle className="flex items-center gap-2">
-                <Link className="w-5 h-5" />
+              <CardTitle className='flex items-center gap-2'>
+                <Link className='w-5 h-5' />
                 Profile Links
               </CardTitle>
               <CardDescription>
@@ -269,14 +278,18 @@ export function ProfileSection() {
             </div>
             <Button
               onClick={() => {
-                setShowProfileForm(!showProfileForm)
-                setEditingProfile(null)
-                setProfileForm({ platform: 'LinkedIn', profileUrl: '', notes: '' })
+                setShowProfileForm(!showProfileForm);
+                setEditingProfile(null);
+                setProfileForm({
+                  platform: 'LinkedIn',
+                  profileUrl: '',
+                  notes: '',
+                });
               }}
-              variant="outline"
-              size="sm"
+              variant='outline'
+              size='sm'
             >
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className='w-4 h-4 mr-2' />
               Add Profile
             </Button>
           </div>
@@ -284,16 +297,21 @@ export function ProfileSection() {
 
         <CardContent>
           {showProfileForm && (
-            <div className="mb-4 p-4 border border-slate-200 rounded-lg bg-slate-50">
-              <form onSubmit={handleProfileSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="platform">Platform</Label>
+            <div className='mb-4 p-4 border border-slate-200 rounded-lg bg-slate-50'>
+              <form onSubmit={handleProfileSubmit} className='space-y-4'>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                  <div className='space-y-2'>
+                    <Label htmlFor='platform'>Platform</Label>
                     <select
-                      id="platform"
+                      id='platform'
                       value={profileForm.platform}
-                      onChange={(e) => setProfileForm(prev => ({ ...prev, platform: e.target.value }))}
-                      className="w-full px-3 py-2 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500"
+                      onChange={e =>
+                        setProfileForm(prev => ({
+                          ...prev,
+                          platform: e.target.value,
+                        }))
+                      }
+                      className='w-full px-3 py-2 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500'
                     >
                       {PLATFORM_OPTIONS.map(option => (
                         <option key={option.value} value={option.value}>
@@ -302,43 +320,57 @@ export function ProfileSection() {
                       ))}
                     </select>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="profileUrl">Profile URL *</Label>
+                  <div className='space-y-2'>
+                    <Label htmlFor='profileUrl'>Profile URL *</Label>
                     <Input
-                      id="profileUrl"
-                      type="url"
+                      id='profileUrl'
+                      type='url'
                       value={profileForm.profileUrl}
-                      onChange={(e) => setProfileForm(prev => ({ ...prev, profileUrl: e.target.value }))}
-                      placeholder="https://linkedin.com/in/yourname"
+                      onChange={e =>
+                        setProfileForm(prev => ({
+                          ...prev,
+                          profileUrl: e.target.value,
+                        }))
+                      }
+                      placeholder='https://linkedin.com/in/yourname'
                       required
                     />
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="notes">Notes (Optional)</Label>
+                <div className='space-y-2'>
+                  <Label htmlFor='notes'>Notes (Optional)</Label>
                   <Input
-                    id="notes"
+                    id='notes'
                     value={profileForm.notes}
-                    onChange={(e) => setProfileForm(prev => ({ ...prev, notes: e.target.value }))}
-                    placeholder="Add any notes about this profile..."
+                    onChange={e =>
+                      setProfileForm(prev => ({
+                        ...prev,
+                        notes: e.target.value,
+                      }))
+                    }
+                    placeholder='Add any notes about this profile...'
                   />
                 </div>
-                <div className="flex gap-2">
-                  <Button type="submit" size="sm" disabled={loading}>
-                    <Save className="w-4 h-4 mr-2" />
+                <div className='flex gap-2'>
+                  <Button type='submit' size='sm' disabled={loading}>
+                    <Save className='w-4 h-4 mr-2' />
                     {editingProfile ? 'Update' : 'Add'} Profile
                   </Button>
                   <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
+                    type='button'
+                    variant='outline'
+                    size='sm'
                     onClick={() => {
-                      setShowProfileForm(false)
-                      setEditingProfile(null)
-                      setProfileForm({ platform: 'LinkedIn', profileUrl: '', notes: '' })
+                      setShowProfileForm(false);
+                      setEditingProfile(null);
+                      setProfileForm({
+                        platform: 'LinkedIn',
+                        profileUrl: '',
+                        notes: '',
+                      });
                     }}
                   >
-                    <X className="w-4 h-4 mr-2" />
+                    <X className='w-4 h-4 mr-2' />
                     Cancel
                   </Button>
                 </div>
@@ -347,55 +379,61 @@ export function ProfileSection() {
           )}
 
           {profiles.length === 0 ? (
-            <p className="text-slate-500 text-center py-4">
-              No profile links added yet. Click &quot;Add Profile&quot; to add your first profile link.
+            <p className='text-slate-500 text-center py-4'>
+              No profile links added yet. Click &quot;Add Profile&quot; to add
+              your first profile link.
             </p>
           ) : (
-            <div className="space-y-3">
-              {profiles.map((profile) => (
+            <div className='space-y-3'>
+              {profiles.map(profile => (
                 <div
                   key={profile.id}
-                  className="flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50"
+                  className='flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50'
                 >
-                  <div className="flex items-center gap-3">
-                    <Link className="w-5 h-5 text-slate-500" />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-200">
+                  <div className='flex items-center gap-3'>
+                    <Link className='w-5 h-5 text-slate-500' />
+                    <div className='flex-1 min-w-0'>
+                      <div className='flex items-center gap-2 mb-1'>
+                        <Badge
+                          variant='secondary'
+                          className='bg-blue-100 text-blue-800 border-blue-200'
+                        >
                           {profile.platform}
                         </Badge>
                         <a
                           href={profile.profileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-800 hover:underline truncate"
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className='text-blue-600 hover:text-blue-800 hover:underline truncate'
                         >
                           {profile.profileUrl}
                         </a>
                       </div>
                       {profile.notes && (
-                        <p className="text-sm text-slate-600 truncate">{profile.notes}</p>
+                        <p className='text-sm text-slate-600 truncate'>
+                          {profile.notes}
+                        </p>
                       )}
-                      <p className="text-xs text-slate-500">
+                      <p className='text-xs text-slate-500'>
                         Added {formatDate(profile.createdAt)}
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className='flex items-center gap-2'>
                     <Button
-                      variant="outline"
-                      size="sm"
+                      variant='outline'
+                      size='sm'
                       onClick={() => handleEditProfile(profile)}
                     >
-                      <Edit className="w-4 h-4" />
+                      <Edit className='w-4 h-4' />
                     </Button>
                     <Button
-                      variant="outline"
-                      size="sm"
+                      variant='outline'
+                      size='sm'
                       onClick={() => handleDeleteProfile(profile.id)}
-                      className="text-red-600 hover:text-red-700"
+                      className='text-red-600 hover:text-red-700'
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className='w-4 h-4' />
                     </Button>
                   </div>
                 </div>
@@ -405,5 +443,5 @@ export function ProfileSection() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

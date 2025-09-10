@@ -1,5 +1,12 @@
-import {createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, User, UserCredential, AuthError} from "firebase/auth";
-import {auth} from "@/firebase/config";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  User,
+  UserCredential,
+  AuthError,
+} from 'firebase/auth';
+import { auth } from '@/firebase/config';
 
 export interface SignupData {
   firstName: string;
@@ -18,7 +25,9 @@ export interface LoginData {
 }
 
 // Sign up with email and password
-export const signUpWithEmail = async (signupData: SignupData): Promise<UserCredential> => {
+export const signUpWithEmail = async (
+  signupData: SignupData
+): Promise<UserCredential> => {
   try {
     const { email, password } = signupData;
     return await createUserWithEmailAndPassword(auth, email, password);
@@ -29,7 +38,9 @@ export const signUpWithEmail = async (signupData: SignupData): Promise<UserCrede
 };
 
 // Sign in with email and password
-export const signInWithEmail = async (loginData: LoginData): Promise<UserCredential> => {
+export const signInWithEmail = async (
+  loginData: LoginData
+): Promise<UserCredential> => {
   try {
     const { email, password } = loginData;
     return await signInWithEmailAndPassword(auth, email, password);
@@ -43,9 +54,8 @@ export const signInWithEmail = async (loginData: LoginData): Promise<UserCredent
 export const signOutUser = async (): Promise<void> => {
   try {
     await signOut(auth);
-  } catch (error: unknown) {
-    console.error("Sign out error:", error);
-    throw new Error("Failed to sign out. Please try again.");
+  } catch {
+    throw new Error('Failed to sign out. Please try again.');
   }
 };
 
@@ -57,21 +67,21 @@ export const getCurrentUser = (): User | null => {
 // Helper function to get user-friendly error messages
 const getAuthErrorMessage = (errorCode: string): string => {
   switch (errorCode) {
-    case "auth/email-already-in-use":
-      return "An account with this email already exists. Please sign in instead.";
-    case "auth/weak-password":
-      return "Password should be at least 6 characters long.";
-    case "auth/invalid-email":
-      return "Please enter a valid email address.";
-    case "auth/user-not-found":
-      return "No account found with this email address.";
-    case "auth/wrong-password":
-      return "Incorrect password. Please try again.";
-    case "auth/too-many-requests":
-      return "Too many failed attempts. Please try again later.";
-    case "auth/network-request-failed":
-      return "Network error. Please check your connection and try again.";
+    case 'auth/email-already-in-use':
+      return 'An account with this email already exists. Please sign in instead.';
+    case 'auth/weak-password':
+      return 'Password should be at least 6 characters long.';
+    case 'auth/invalid-email':
+      return 'Please enter a valid email address.';
+    case 'auth/user-not-found':
+      return 'No account found with this email address.';
+    case 'auth/wrong-password':
+      return 'Incorrect password. Please try again.';
+    case 'auth/too-many-requests':
+      return 'Too many failed attempts. Please try again later.';
+    case 'auth/network-request-failed':
+      return 'Network error. Please check your connection and try again.';
     default:
-      return "An error occurred. Please try again.";
+      return 'An error occurred. Please try again.';
   }
 };

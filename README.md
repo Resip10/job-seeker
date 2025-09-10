@@ -5,23 +5,27 @@ A modern, responsive web application built for job seekers to manage their caree
 ## 🛠️ Technologies Used
 
 ### Frontend
+
 - **Next.js** - React framework with App Router
 - **React** - UI library
 - **TypeScript** - Type safety
 - **Tailwind** - Utility-first CSS framework
 
 ### UI Components
+
 - **shadcn/ui** - Beautifully designed, accessible components built with Radix UI primitives
 - **Lucide React** - Beautiful icons
 - **Class Variance Authority** - Component variant management
 
 ### Backend & Database
+
 - **Firebase** - Complete backend-as-a-service platform
 - **Firestore** - NoSQL database for job applications, profiles, and resumes
 - **Firebase Auth** - User authentication and session management
 - **Firebase Storage** - Cloud file storage for resume uploads
 
 ### State Management
+
 - **React Context** - Global state management for jobs, profiles, and authentication
 - **Custom Hooks** - Reusable logic for data fetching and state updates
 - **Context Providers** - JobsContext, ProfileContext, and AuthContext for organized state management
@@ -29,18 +33,21 @@ A modern, responsive web application built for job seekers to manage their caree
 ## 📦 Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd job-seeker
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Set up environment variables**
    Create a `.env.local` file in the root directory and add your Firebase configuration:
+
    ```env
    NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
@@ -51,6 +58,7 @@ A modern, responsive web application built for job seekers to manage their caree
    ```
 
 4. **Run the development server**
+
    ```bash
    npm run dev
    ```
@@ -60,16 +68,17 @@ A modern, responsive web application built for job seekers to manage their caree
 
 ## 📜 Available Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server with Turbopack |
-| `npm run build` | Build the application for production |
-| `npm run start` | Start the production server |
-| `npm run lint` | Run ESLint to check for code issues |
+| Command         | Description                             |
+| --------------- | --------------------------------------- |
+| `npm run dev`   | Start development server with Turbopack |
+| `npm run build` | Build the application for production    |
+| `npm run start` | Start the production server             |
+| `npm run lint`  | Run ESLint to check for code issues     |
 
 ## 🔧 Configuration
 
 ### Firebase Setup
+
 1. Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
 2. Enable Authentication with Email/Password provider
 3. Create a Firestore database
@@ -77,6 +86,7 @@ A modern, responsive web application built for job seekers to manage their caree
 5. Copy your Firebase configuration to `.env.local`
 
 ### Firestore Security Rules
+
 Add these rules to your Firestore database for secure data access:
 
 ```javascript
@@ -88,13 +98,13 @@ service cloud.firestore {
       allow create: if request.auth != null;
       allow read, update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
     }
-    
+
     // Resumes - users can only access their own resumes
     match /resumes/{resumeId} {
       allow create: if request.auth != null;
       allow read, update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
     }
-    
+
     // Profiles - users can only access their own profiles
     match /profiles/{profileId} {
       allow create: if request.auth != null;
@@ -105,6 +115,7 @@ service cloud.firestore {
 ```
 
 ### Firebase Storage Security Rules
+
 Add these rules to your Firebase Storage for secure file access:
 
 ```javascript
@@ -172,17 +183,20 @@ src/
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18+ 
+
+- Node.js 18+
 - npm or yarn
 - Firebase project with Firestore and Storage enabled
 
 ### Quick Start
+
 1. Clone the repository and install dependencies
 2. Set up your Firebase project and configure environment variables
 3. Run the development server
 4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ### First Steps
+
 1. **Sign Up** - Create a new account with your email
 2. **Add Job Applications** - Start tracking your job applications
 3. **Upload Resumes** - Store different versions of your resume

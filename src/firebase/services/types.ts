@@ -1,4 +1,4 @@
-import { Timestamp } from "firebase/firestore";
+import { Timestamp } from 'firebase/firestore';
 
 // Simple types for MVP
 export interface User {
@@ -22,7 +22,6 @@ export interface Job {
 export interface IJobDoc extends Job {
   id: string;
 }
-
 
 // Resume types
 export interface Resume {

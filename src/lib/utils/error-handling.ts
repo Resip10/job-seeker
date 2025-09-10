@@ -8,30 +8,36 @@
  * Can be extended for other services beyond Firestore
  */
 export const handleServiceError = (
-  error: unknown, 
-  operation: string, 
+  error: unknown,
+  operation: string,
   serviceName: string = 'Service'
 ): never => {
   console.error(`${serviceName} ${operation} error:`, error);
-  
+
   if (error instanceof Error) {
     throw new Error(`${serviceName} ${operation} failed: ${error.message}`);
   }
-  
-  throw new Error(`An unexpected error occurred during ${serviceName} ${operation}.`);
+
+  throw new Error(
+    `An unexpected error occurred during ${serviceName} ${operation}.`
+  );
 };
 
 /**
  * Creates a standardized error response
  */
-export const createErrorResponse = (message: string, code: string, details?: unknown) => ({
+export const createErrorResponse = (
+  message: string,
+  code: string,
+  details?: unknown
+) => ({
   success: false,
   error: {
     message,
     code,
     details,
     timestamp: new Date().toISOString(),
-  }
+  },
 });
 
 /**

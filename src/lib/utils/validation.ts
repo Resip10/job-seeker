@@ -6,7 +6,10 @@
 /**
  * Generic string validation utility
  */
-export const validateRequiredString = (value: string | undefined, fieldName: string): void => {
+export const validateRequiredString = (
+  value: string | undefined,
+  fieldName: string
+): void => {
   if (!value?.trim()) {
     throw new Error(`${fieldName} is required.`);
   }
@@ -47,12 +50,11 @@ export const validatePagination = (limit?: number, offset?: number): void => {
   if (limit !== undefined && (limit < 1 || limit > 1000)) {
     throw new Error('Limit must be between 1 and 1000.');
   }
-  
+
   if (offset !== undefined && offset < 0) {
     throw new Error('Offset must be non-negative.');
   }
 };
-
 
 /**
  * Validates that a value is not null or undefined
@@ -66,17 +68,29 @@ export const validateRequired = (value: unknown, fieldName: string): void => {
 /**
  * Validates that a string has minimum length
  */
-export const validateMinLength = (value: string, minLength: number, fieldName: string): void => {
+export const validateMinLength = (
+  value: string,
+  minLength: number,
+  fieldName: string
+): void => {
   if (value.length < minLength) {
-    throw new Error(`${fieldName} must be at least ${minLength} characters long.`);
+    throw new Error(
+      `${fieldName} must be at least ${minLength} characters long.`
+    );
   }
 };
 
 /**
  * Validates that a string has maximum length
  */
-export const validateMaxLength = (value: string, maxLength: number, fieldName: string): void => {
+export const validateMaxLength = (
+  value: string,
+  maxLength: number,
+  fieldName: string
+): void => {
   if (value.length > maxLength) {
-    throw new Error(`${fieldName} must be no more than ${maxLength} characters long.`);
+    throw new Error(
+      `${fieldName} must be no more than ${maxLength} characters long.`
+    );
   }
 };

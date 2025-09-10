@@ -8,28 +8,32 @@
  * Handles both Firestore Timestamps and regular Date objects
  */
 export const formatDate = (timestamp: unknown): string => {
-  if (!timestamp) return 'N/A'
-  
+  if (!timestamp) return 'N/A';
+
   // Handle Firestore Timestamp
-  if (typeof timestamp === 'object' && timestamp !== null && 'toDate' in timestamp) {
-    const date = (timestamp as { toDate: () => Date }).toDate()
+  if (
+    typeof timestamp === 'object' &&
+    timestamp !== null &&
+    'toDate' in timestamp
+  ) {
+    const date = (timestamp as { toDate: () => Date }).toDate();
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
-    })
+      day: 'numeric',
+    });
   }
-  
+
   // Handle regular Date or string
   try {
-    const date = new Date(timestamp as string | number | Date)
+    const date = new Date(timestamp as string | number | Date);
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
-    })
+      day: 'numeric',
+    });
   } catch {
-    return 'N/A'
+    return 'N/A';
   }
 };
 
@@ -37,32 +41,36 @@ export const formatDate = (timestamp: unknown): string => {
  * Formats a timestamp to a readable date and time string
  */
 export const formatDateTime = (timestamp: unknown): string => {
-  if (!timestamp) return 'N/A'
-  
+  if (!timestamp) return 'N/A';
+
   // Handle Firestore Timestamp
-  if (typeof timestamp === 'object' && timestamp !== null && 'toDate' in timestamp) {
-    const date = (timestamp as { toDate: () => Date }).toDate()
+  if (
+    typeof timestamp === 'object' &&
+    timestamp !== null &&
+    'toDate' in timestamp
+  ) {
+    const date = (timestamp as { toDate: () => Date }).toDate();
     return date.toLocaleString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
-    })
+      minute: '2-digit',
+    });
   }
-  
+
   // Handle regular Date or string
   try {
-    const date = new Date(timestamp as string | number | Date)
+    const date = new Date(timestamp as string | number | Date);
     return date.toLocaleString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
-    })
+      minute: '2-digit',
+    });
   } catch {
-    return 'N/A'
+    return 'N/A';
   }
 };
 
@@ -70,97 +78,113 @@ export const formatDateTime = (timestamp: unknown): string => {
  * Formats a timestamp to a relative time string (e.g., "2 days ago")
  */
 export const formatRelativeTime = (timestamp: unknown): string => {
-  if (!timestamp) return 'N/A'
-  
-  let date: Date
-  
+  if (!timestamp) return 'N/A';
+
+  let date: Date;
+
   // Handle Firestore Timestamp
-  if (typeof timestamp === 'object' && timestamp !== null && 'toDate' in timestamp) {
-    date = (timestamp as { toDate: () => Date }).toDate()
+  if (
+    typeof timestamp === 'object' &&
+    timestamp !== null &&
+    'toDate' in timestamp
+  ) {
+    date = (timestamp as { toDate: () => Date }).toDate();
   } else {
     // Handle regular Date or string
     try {
-      date = new Date(timestamp as string | number | Date)
+      date = new Date(timestamp as string | number | Date);
     } catch {
-      return 'N/A'
+      return 'N/A';
     }
   }
-  
-  const now = new Date()
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
-  
-  if (diffInSeconds < 60) return 'Just now'
-  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`
-  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`
-  if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} days ago`
-  if (diffInSeconds < 31536000) return `${Math.floor(diffInSeconds / 2592000)} months ago`
-  return `${Math.floor(diffInSeconds / 31536000)} years ago`
+
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  if (diffInSeconds < 60) return 'Just now';
+  if (diffInSeconds < 3600)
+    return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+  if (diffInSeconds < 86400)
+    return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+  if (diffInSeconds < 2592000)
+    return `${Math.floor(diffInSeconds / 86400)} days ago`;
+  if (diffInSeconds < 31536000)
+    return `${Math.floor(diffInSeconds / 2592000)} months ago`;
+  return `${Math.floor(diffInSeconds / 31536000)} years ago`;
 };
 
 /**
  * Checks if a timestamp is today
  */
 export const isToday = (timestamp: unknown): boolean => {
-  if (!timestamp) return false
-  
-  let date: Date
-  
+  if (!timestamp) return false;
+
+  let date: Date;
+
   // Handle Firestore Timestamp
-  if (typeof timestamp === 'object' && timestamp !== null && 'toDate' in timestamp) {
-    date = (timestamp as { toDate: () => Date }).toDate()
+  if (
+    typeof timestamp === 'object' &&
+    timestamp !== null &&
+    'toDate' in timestamp
+  ) {
+    date = (timestamp as { toDate: () => Date }).toDate();
   } else {
     try {
-      date = new Date(timestamp as string | number | Date)
+      date = new Date(timestamp as string | number | Date);
     } catch {
-      return false
+      return false;
     }
   }
-  
-  const today = new Date()
-  return date.toDateString() === today.toDateString()
+
+  const today = new Date();
+  return date.toDateString() === today.toDateString();
 };
 
 /**
  * Checks if a timestamp is within the last N days
  */
 export const isWithinDays = (timestamp: unknown, days: number): boolean => {
-  if (!timestamp) return false
-  
-  let date: Date
-  
+  if (!timestamp) return false;
+
+  let date: Date;
+
   // Handle Firestore Timestamp
-  if (typeof timestamp === 'object' && timestamp !== null && 'toDate' in timestamp) {
-    date = (timestamp as { toDate: () => Date }).toDate()
+  if (
+    typeof timestamp === 'object' &&
+    timestamp !== null &&
+    'toDate' in timestamp
+  ) {
+    date = (timestamp as { toDate: () => Date }).toDate();
   } else {
     try {
-      date = new Date(timestamp as string | number | Date)
+      date = new Date(timestamp as string | number | Date);
     } catch {
-      return false
+      return false;
     }
   }
-  
-  const now = new Date()
-  const diffInDays = (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24)
-  return diffInDays <= days
+
+  const now = new Date();
+  const diffInDays = (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24);
+  return diffInDays <= days;
 };
 
 /**
  * Formats a date to show weekday, day, and month (e.g., "Monday, 15 January")
  */
 export const formatWeekdayDate = (date: Date = new Date()): string => {
-  return date.toLocaleDateString('en-US', { 
-    weekday: 'long', 
-    day: 'numeric', 
-    month: 'long' 
-  })
+  return date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  });
 };
 
 /**
  * Gets the time of day period based on the current hour
  */
 export const getTimeOfDay = (date: Date = new Date()): string => {
-  const hour = date.getHours()
-  if (hour < 12) return 'Morning'
-  if (hour < 18) return 'Afternoon'
-  return 'Evening'
+  const hour = date.getHours();
+  if (hour < 12) return 'Morning';
+  if (hour < 18) return 'Afternoon';
+  return 'Evening';
 };
