@@ -1,41 +1,45 @@
 # Job Seeker Platform
 
-A modern, responsive web application built for job seekers to manage their career journey. Track job applications, manage application status, organize your job search process, and maintain your professional profiles with a clean, intuitive interface.
+A modern, comprehensive job application management platform built for job seekers to track applications, manage professional profiles, and organize their career journey with an intuitive, responsive interface.
 
 ## 🛠️ Technologies Used
 
 ### Frontend
 
-- **Next.js** - React framework with App Router
-- **React** - UI library
-- **TypeScript** - Type safety
-- **Tailwind** - Utility-first CSS framework
+- **Next.js 15** - React framework with App Router and Turbopack
+- **React 19** - Latest React with concurrent features
+- **TypeScript** - Full type safety throughout the application
+- **Tailwind CSS 4** - Modern utility-first CSS framework
 
-### UI Components
+### UI Components & Design
 
-- **shadcn/ui** - Beautifully designed, accessible components built with Radix UI primitives
-- **Lucide React** - Beautiful icons
-- **Class Variance Authority** - Component variant management
+- **shadcn/ui** - Beautifully designed, accessible components
+- **Radix UI** - Unstyled, accessible UI primitives
+- **Lucide React** - Consistent, beautiful icon library
+- **Framer Motion** - Smooth animations and transitions
+- **Class Variance Authority** - Type-safe component variants
 
 ### Backend & Database
 
 - **Firebase** - Complete backend-as-a-service platform
-- **Firestore** - NoSQL database for job applications, profiles, and resumes
-- **Firebase Auth** - User authentication and session management
-- **Firebase Storage** - Cloud file storage for resume uploads
+- **Firestore** - NoSQL database for real-time data synchronization
+- **Firebase Auth** - Secure user authentication and session management
+- **Firebase Storage** - Cloud file storage for resumes and images
 
-### State Management
+### State Management & Data Flow
 
-- **React Context** - Global state management for jobs, profiles, and authentication
-- **Custom Hooks** - Reusable logic for data fetching and state updates
-- **Context Providers** - JobsContext, ProfileContext, and AuthContext for organized state management
+- **React Context** - Global state management for jobs, profiles, and auth
+- **Custom Hooks** - Reusable logic for data fetching and form handling
+- **Local Storage** - Client-side persistence for UI preferences
+- **Real-time Updates** - Live data synchronization across devices
 
-### Development Tools & Code Quality
+### Development & Code Quality
 
 - **ESLint** - Advanced linting with TypeScript, React, and accessibility rules
-- **Prettier** - Code formatting for consistent style across the project
-- **Husky** - Git hooks for pre-commit code quality checks
-- **lint-staged** - Run linters only on staged files for faster commits
+- **Prettier** - Consistent code formatting across the project
+- **Husky** - Git hooks for pre-commit quality checks
+- **lint-staged** - Optimized linting on staged files only
+- **TypeScript** - Strict type checking and IntelliSense support
 
 ## 📦 Installation
 
@@ -53,7 +57,7 @@ A modern, responsive web application built for job seekers to manage their caree
    ```
 
 3. **Set up environment variables**
-   Create a `.env.local` file in the root directory and add your Firebase configuration:
+   Create a `.env.local` file in the root directory:
 
    ```env
    NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
@@ -94,12 +98,11 @@ A modern, responsive web application built for job seekers to manage their caree
 1. Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
 2. Enable Authentication with Email/Password provider
 3. Create a Firestore database
-4. Set up Firestore security rules (see below)
-5. Copy your Firebase configuration to `.env.local`
+4. Set up Firebase Storage
+5. Configure security rules (see below)
+6. Copy your Firebase configuration to `.env.local`
 
 ### Firestore Security Rules
-
-Add these rules to your Firestore database for secure data access:
 
 ```javascript
 rules_version = '2';
@@ -122,20 +125,27 @@ service cloud.firestore {
       allow create: if request.auth != null;
       allow read, update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
     }
+
+    // User profiles - users can only access their own profile
+    match /userProfiles/{profileId} {
+      allow create: if request.auth != null;
+      allow read, update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
+    }
   }
 }
 ```
 
 ### Firebase Storage Security Rules
 
-Add these rules to your Firebase Storage for secure file access:
-
 ```javascript
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    // Users can only upload and access their own resume files
+    // Users can only upload and access their own files
     match /resumes/{userId}/{allPaths=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    match /profile-images/{userId}/{allPaths=**} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
   }
@@ -147,49 +157,86 @@ service firebase.storage {
 ```
 src/
 ├── app/                    # Next.js App Router pages
-│   ├── dashboard/         # Protected dashboard page with job management
-│   ├── login/            # User login page with authentication
-│   ├── signup/           # User registration page
-│   ├── layout.tsx        # Root layout with providers
-│   └── page.tsx          # Landing page
+│   ├── applications/       # Job application management page
+│   ├── dashboard/          # Main dashboard with overview
+│   ├── login/             # User authentication
+│   ├── profile/           # Complete profile management
+│   ├── signup/            # User registration
+│   ├── layout.tsx         # Root layout with providers
+│   └── page.tsx           # Landing page
 ├── components/            # Reusable UI components
-│   ├── jobs/             # Job management components
-│   │   ├── JobCard.tsx   # Individual job application card
-│   │   ├── JobForm.tsx   # Add/edit job application form
-│   │   └── JobList.tsx   # Job applications list with search/filter
-│   ├── profile/          # Profile management components
-│   │   └── ProfileSection.tsx # Professional profiles management
-│   ├── layouts/          # Layout components
-│   │   ├── PrivateLayout.tsx  # Authenticated user layout
-│   │   ├── PublicLayout.tsx   # Public pages layout
-│   │   ├── DashboardLayout.tsx # Dashboard layout with sidebar
-│   │   └── Sidebar.tsx        # Collapsible navigation sidebar
-│   ├── dashboard/        # Dashboard-specific components
-│   │   ├── SummaryCard.tsx    # Job application statistics
-│   │   └── StatusItem.tsx     # Status indicator component
-│   ├── ui/               # Base UI components (shadcn/ui)
-│   └── jobSeekerHero.tsx # Landing page hero component
-├── contexts/             # React Context providers
-│   ├── AuthContext.tsx   # Authentication state management
-│   ├── JobsContext.tsx   # Job applications state management
+│   ├── dashboard/         # Dashboard-specific components
+│   │   ├── OverviewSection.tsx      # Stats and quick actions
+│   │   ├── ProfileCompletionCard.tsx # Profile progress tracking
+│   │   ├── SummaryCard.tsx          # Application statistics
+│   │   └── StatusItem.tsx           # Status indicators
+│   ├── jobs/              # Job management components
+│   │   ├── JobCard.tsx    # Individual job application card
+│   │   ├── JobForm.tsx    # Add/edit job application form
+│   │   └── JobList.tsx    # Job applications list with filtering
+│   ├── profile/           # Profile management components
+│   │   ├── EducationSection.tsx     # Education management
+│   │   ├── ExperienceSection.tsx    # Work experience management
+│   │   ├── ProfileHeader.tsx        # Personal information
+│   │   ├── ProfileLinksSection.tsx  # Additional profile links
+│   │   ├── ProfilePageContent.tsx   # Main profile page layout
+│   │   ├── ResumeSection.tsx        # Resume management
+│   │   ├── SkillsSection.tsx        # Skills management
+│   │   └── SocialLinksSection.tsx   # Social media links
+│   ├── layouts/           # Layout components
+│   │   ├── AppLayout.tsx  # Main application layout with sidebar
+│   │   ├── PrivateLayout.tsx        # Authenticated user layout
+│   │   ├── PublicLayout.tsx         # Public pages layout
+│   │   └── Sidebar.tsx              # Navigation sidebar
+│   ├── icons/             # Custom icon components
+│   │   ├── GitHubIcon.tsx
+│   │   ├── LinkedInIcon.tsx
+│   │   └── XIcon.tsx
+│   ├── ui/                # Base UI components (shadcn/ui)
+│   │   ├── alert.tsx
+│   │   ├── badge.tsx
+│   │   ├── button.tsx
+│   │   ├── calendar.tsx
+│   │   ├── card.tsx
+│   │   ├── card-actions.tsx
+│   │   ├── checkbox.tsx
+│   │   ├── empty-state.tsx
+│   │   ├── form-field.tsx
+│   │   ├── input.tsx
+│   │   ├── label.tsx
+│   │   ├── loading-state.tsx
+│   │   ├── popover.tsx
+│   │   ├── select.tsx
+│   │   ├── separator.tsx
+│   │   └── textarea.tsx
+│   └── jobSeekerHero.tsx  # Landing page hero component
+├── contexts/              # React Context providers
+│   ├── AuthContext.tsx    # Authentication state management
+│   ├── JobsContext.tsx    # Job applications state management
 │   └── ProfileContext.tsx # Profiles and resumes state management
-├── firebase/             # Firebase configuration and services
-│   ├── config.ts         # Firebase app configuration
-│   └── services/         # Firebase service layer
-│       ├── firestore.ts  # Firestore database operations
-│       ├── storage.ts    # Firebase Storage operations
-│       ├── types.ts      # TypeScript interfaces for data models
-│       ├── constants.ts  # Application constants
-│       ├── validation.ts # Data validation utilities
-│       └── error-handling.ts # Error handling utilities
-├── lib/                  # Utility functions and shared code
-│   ├── auth.ts           # Authentication utilities
-│   ├── utils.ts          # General utility functions
-│   └── utils/            # Specialized utility modules
-│       ├── date.ts       # Date formatting utilities
-│       ├── validation.ts # Form validation utilities
-│       └── error-handling.ts # Error handling utilities
-└── types/                # Global TypeScript type definitions
+├── firebase/              # Firebase configuration and services
+│   ├── config.ts          # Firebase app configuration
+│   └── services/          # Firebase service layer
+│       ├── constants.ts   # Application constants
+│       ├── error-handling.ts # Error handling utilities
+│       ├── firestore.ts   # Firestore database operations
+│       ├── storage.ts     # Firebase Storage operations
+│       ├── types.ts       # TypeScript interfaces
+│       └── validation.ts  # Data validation utilities
+├── hooks/                 # Custom React hooks
+│   ├── useConfirmation.ts # Confirmation dialog hook
+│   ├── useForm.ts         # Form state management hook
+│   ├── useStatusCounts.ts # Job status counting hook
+│   └── useUserName.ts     # User name retrieval hook
+├── lib/                   # Utility functions and shared code
+│   ├── auth.ts            # Authentication utilities
+│   ├── utils.ts           # General utility functions
+│   └── utils/             # Specialized utility modules
+│       ├── date.ts        # Date formatting utilities
+│       ├── error-handling.ts # Error handling utilities
+│       ├── form.ts        # Form validation utilities
+│       └── validation.ts  # Data validation utilities
+└── types/                 # Global TypeScript type definitions
 
 # Configuration Files
 ├── .prettierrc           # Prettier code formatting configuration
@@ -221,30 +268,25 @@ src/
 ### First Steps
 
 1. **Sign Up** - Create a new account with your email
-2. **Add Job Applications** - Start tracking your job applications
-3. **Upload Resumes** - Store different versions of your resume
-4. **Manage Profiles** - Add your professional profile links
-5. **Track Progress** - Monitor your application status and statistics
+2. **Complete Your Profile** - Add personal information, experience, education, and skills
+3. **Upload Your Resume** - Store different versions of your resume
+4. **Add Job Applications** - Start tracking your job applications
+5. **Monitor Progress** - Use the dashboard to track your application status and profile completion
 
-## 🔄 Development Workflow
+## 🤝 Contributing
 
-### Code Quality Checks
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-Before committing, the following checks run automatically:
+## 📄 License
 
-- **TypeScript compilation** - Ensures type safety
-- **ESLint** - Catches code quality issues and enforces best practices
-- **Prettier** - Formats code consistently
-
-### Pre-commit Hooks
-
-The project uses Husky and lint-staged to automatically:
-
-- Run ESLint on staged files
-- Format code with Prettier
-- Prevent commits with TypeScript errors
-- Ensure consistent code quality across the team
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-**Note**: This is a comprehensive job application management platform. Perfect for organizing and tracking your entire job search process!
+**Built with ❤️ for job seekers everywhere!**
+
+This comprehensive platform helps you stay organized, track your progress, and land your dream job. Perfect for managing your entire job search process from application to offer.
