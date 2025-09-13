@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { JobCard } from './JobCard';
 import { JobForm } from './JobForm';
 import { IJobDoc } from '@/firebase/services/types';
+import { STATUS_FILTER_OPTIONS } from '@/firebase/services/constants';
 import { Search, Filter, Briefcase } from 'lucide-react';
 
 interface JobListProps {
@@ -18,15 +19,6 @@ interface JobListProps {
   onDeleteJob: (jobId: string) => Promise<void>;
   isLoading?: boolean;
 }
-
-const STATUS_FILTERS = [
-  { value: '', label: 'All Statuses' },
-  { value: 'applied', label: 'Applied' },
-  { value: 'interview', label: 'Interview' },
-  { value: 'offer', label: 'Offer' },
-  { value: 'rejected', label: 'Rejected' },
-  { value: 'withdrawn', label: 'Withdrawn' },
-];
 
 export function JobList({
   jobs,
@@ -136,7 +128,7 @@ export function JobList({
                   onChange={e => handleStatusFilterChange(e.target.value)}
                   className='w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-text-dark cursor-pointer'
                 >
-                  {STATUS_FILTERS.map(filter => (
+                  {STATUS_FILTER_OPTIONS.map(filter => (
                     <option key={filter.value} value={filter.value}>
                       {filter.label}
                     </option>

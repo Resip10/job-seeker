@@ -36,7 +36,57 @@ export interface ResumeDoc extends Resume {
   id: string;
 }
 
-// Profile types
+// User Profile types
+export interface UserProfile {
+  id?: string;
+  userId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  bio?: string;
+  location?: string;
+  phone?: string;
+  website?: string;
+  linkedinUrl?: string;
+  githubUrl?: string;
+  twitterUrl?: string;
+  portfolioUrl?: string;
+  profileImageUrl?: string;
+  resumeUrl?: string;
+  skills: string[];
+  experience: WorkExperience[];
+  education: Education[];
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
+
+export interface UserProfileDoc extends UserProfile {
+  id: string;
+}
+
+export interface WorkExperience {
+  id: string;
+  company: string;
+  position: string;
+  location?: string;
+  startDate: string;
+  endDate?: string;
+  current: boolean;
+  description?: string;
+}
+
+export interface Education {
+  id: string;
+  institution: string;
+  degree: string;
+  fieldOfStudy?: string;
+  startDate: string;
+  endDate?: string;
+  current: boolean;
+  description?: string;
+}
+
+// Profile links types (keeping existing for backward compatibility)
 export interface Profile {
   id?: string;
   userId: string;

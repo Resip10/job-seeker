@@ -1,8 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
   Card,
@@ -14,6 +12,10 @@ import {
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { X, Save, Plus } from 'lucide-react';
 import { IJobDoc } from '@/firebase/services/types';
+import { JOB_STATUS_OPTIONS } from '@/firebase/services/constants';
+import { useForm } from '@/hooks/useForm';
+import { FormField } from '@/components/ui/form-field';
+import { validateRequired, validateUrl } from '@/lib/utils/form';
 
 interface JobFormProps {
   job?: IJobDoc | null;
@@ -24,59 +26,39 @@ interface JobFormProps {
   isLoading?: boolean;
 }
 
-const JOB_STATUSES = [
-  { value: 'applied', label: 'Applied' },
-  { value: 'interview', label: 'Interview' },
-  { value: 'offer', label: 'Offer' },
-  { value: 'rejected', label: 'Rejected' },
-  { value: 'withdrawn', label: 'Withdrawn' },
-];
-
 export function JobForm({
   job,
   onSave,
   onCancel,
   isLoading = false,
 }: JobFormProps) {
-  const [formData, setFormData] = useState({
-    title: job?.title || '',
-    company: job?.company || '',
-    link: job?.link || '',
-    status: job?.status || 'applied',
-    notes: job?.notes || '',
+  const { formData, error, handleSubmit, handleInputChange } = useForm({
+    initialValues: {
+      title: job?.title || '',
+      company: job?.company || '',
+      link: job?.link || '',
+      status: job?.status || 'applied',
+      notes: job?.notes || '',
+    },
+    onSubmit: onSave,
+    validate: values => {
+      const errors: Record<string, string> = {};
+
+      if (validateRequired(values.title, 'Job title')) {
+        errors.title = validateRequired(values.title, 'Job title')!;
+      }
+      if (validateRequired(values.company, 'Company name')) {
+        errors.company = validateRequired(values.company, 'Company name')!;
+      }
+      if (validateRequired(values.link, 'Job link')) {
+        errors.link = validateRequired(values.link, 'Job link')!;
+      } else if (validateUrl(values.link)) {
+        errors.link = validateUrl(values.link)!;
+      }
+
+      return Object.keys(errors).length > 0 ? errors : null;
+    },
   });
-  const [error, setError] = useState('');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-
-    // Basic validation
-    if (!formData.title.trim()) {
-      setError('Job title is required');
-      return;
-    }
-    if (!formData.company.trim()) {
-      setError('Company name is required');
-      return;
-    }
-    if (!formData.link.trim()) {
-      setError('Job link is required');
-      return;
-    }
-
-    try {
-      await onSave(formData);
-    } catch (err: unknown) {
-      const error = err as Error;
-      setError(error.message || 'Failed to save job');
-    }
-  };
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (error) setError('');
-  };
 
   return (
     <Card className='w-full max-w-2xl mx-auto'>
@@ -122,40 +104,34 @@ export function JobForm({
           )}
 
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-            <div className='space-y-2'>
-              <Label htmlFor='title'>Job Title *</Label>
-              <Input
-                id='title'
-                value={formData.title}
-                onChange={e => handleInputChange('title', e.target.value)}
-                placeholder='e.g. Frontend Developer'
-                required
-              />
-            </div>
+            <FormField
+              label='Job Title'
+              id='title'
+              value={formData.title}
+              onChange={value => handleInputChange('title', value)}
+              placeholder='e.g. Frontend Developer'
+              required
+            />
 
-            <div className='space-y-2'>
-              <Label htmlFor='company'>Company *</Label>
-              <Input
-                id='company'
-                value={formData.company}
-                onChange={e => handleInputChange('company', e.target.value)}
-                placeholder='e.g. Tech Corp'
-                required
-              />
-            </div>
-          </div>
-
-          <div className='space-y-2'>
-            <Label htmlFor='link'>Job Link *</Label>
-            <Input
-              id='link'
-              type='url'
-              value={formData.link}
-              onChange={e => handleInputChange('link', e.target.value)}
-              placeholder='https://company.com/job-posting'
+            <FormField
+              label='Company'
+              id='company'
+              value={formData.company}
+              onChange={value => handleInputChange('company', value)}
+              placeholder='e.g. Tech Corp'
               required
             />
           </div>
+
+          <FormField
+            label='Job Link'
+            id='link'
+            type='url'
+            value={formData.link}
+            onChange={value => handleInputChange('link', value)}
+            placeholder='https://company.com/job-posting'
+            required
+          />
 
           <div className='space-y-2'>
             <Label htmlFor='status'>Status</Label>
@@ -165,7 +141,7 @@ export function JobForm({
               onChange={e => handleInputChange('status', e.target.value)}
               className='w-full px-3 py-2 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent cursor-pointer'
             >
-              {JOB_STATUSES.map(status => (
+              {JOB_STATUS_OPTIONS.map(status => (
                 <option key={status.value} value={status.value}>
                   {status.label}
                 </option>
@@ -173,17 +149,15 @@ export function JobForm({
             </select>
           </div>
 
-          <div className='space-y-2'>
-            <Label htmlFor='notes'>Notes (Optional)</Label>
-            <textarea
-              id='notes'
-              value={formData.notes}
-              onChange={e => handleInputChange('notes', e.target.value)}
-              placeholder='Add any notes about this job application...'
-              rows={3}
-              className='w-full px-3 py-2 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent resize-none'
-            />
-          </div>
+          <FormField
+            label='Notes (Optional)'
+            id='notes'
+            type='textarea'
+            value={formData.notes}
+            onChange={value => handleInputChange('notes', value)}
+            placeholder='Add any notes about this job application...'
+            rows={3}
+          />
 
           <div className='flex gap-3 pt-4'>
             <Button type='submit' disabled={isLoading} className='flex-1'>

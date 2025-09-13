@@ -197,4 +197,21 @@
   .shadow-card {
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
   }
+
+  /* Global cursor utilities */
+  button,
+  [role='button'],
+  input[type='button'],
+  input[type='submit'],
+  input[type='reset'],
+  select,
+  a {
+    @apply cursor-pointer;
+  }
+
+  button:disabled,
+  input:disabled,
+  select:disabled {
+    @apply cursor-not-allowed;
+  }
 }

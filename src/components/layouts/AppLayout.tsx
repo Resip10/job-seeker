@@ -2,11 +2,11 @@
 
 import { Sidebar } from './Sidebar';
 
-interface DashboardLayoutProps {
+interface AppLayoutProps {
   children: React.ReactNode;
 }
 
-export function DashboardLayout({ children }: DashboardLayoutProps) {
+export function AppLayout({ children }: AppLayoutProps) {
   return (
     <div className='flex h-screen bg-slate-50'>
       {/* Sidebar */}

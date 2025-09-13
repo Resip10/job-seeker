@@ -32,3 +32,13 @@ export const generateUserFilePath = (
   const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_');
   return `resumes/${userId}/${timestamp}_${sanitizedFileName}`;
 };
+
+// Generate unique file path for profile images
+export const generateProfileImagePath = (
+  userId: string,
+  fileName: string
+): string => {
+  const timestamp = Date.now();
+  const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_');
+  return `profile-images/${userId}/${timestamp}_${sanitizedFileName}`;
+};

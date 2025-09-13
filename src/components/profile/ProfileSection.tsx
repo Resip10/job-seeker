@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,14 +29,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { uploadFile, generateUserFilePath } from '@/firebase/services/storage';
 import { formatDate } from '@/lib/utils/date';
 import { ProfileDoc } from '@/firebase/services/types';
-
-const PLATFORM_OPTIONS = [
-  { value: 'LinkedIn', label: 'LinkedIn' },
-  { value: 'GitHub', label: 'GitHub' },
-  { value: 'Portfolio', label: 'Portfolio' },
-  { value: 'Twitter', label: 'Twitter' },
-  { value: 'Other', label: 'Other' },
-];
+import { PLATFORM_OPTIONS } from '@/firebase/services/constants';
 
 export function ProfileSection() {
   const { user } = useAuth();
@@ -251,7 +244,7 @@ export function ProfileSection() {
                       variant='outline'
                       size='sm'
                       onClick={() => handleDeleteResume(resume.id)}
-                      className='text-red-600 hover:text-red-700'
+                      className='text-red-600 hover:text-red-700 cursor-pointer'
                     >
                       <Trash2 className='w-4 h-4' />
                     </Button>
@@ -352,7 +345,12 @@ export function ProfileSection() {
                   />
                 </div>
                 <div className='flex gap-2'>
-                  <Button type='submit' size='sm' disabled={loading}>
+                  <Button
+                    type='submit'
+                    size='sm'
+                    disabled={loading}
+                    className='cursor-pointer'
+                  >
                     <Save className='w-4 h-4 mr-2' />
                     {editingProfile ? 'Update' : 'Add'} Profile
                   </Button>
@@ -431,7 +429,7 @@ export function ProfileSection() {
                       variant='outline'
                       size='sm'
                       onClick={() => handleDeleteProfile(profile.id)}
-                      className='text-red-600 hover:text-red-700'
+                      className='text-red-600 hover:text-red-700 cursor-pointer'
                     >
                       <Trash2 className='w-4 h-4' />
                     </Button>

@@ -152,7 +152,7 @@ export function JobCard({
               size='sm'
               onClick={() => onEdit(job)}
               disabled={isLoading}
-              className='flex-1'
+              className='flex-1 cursor-pointer'
             >
               <Edit className='w-3 h-3 mr-1' />
               Edit
@@ -162,7 +162,7 @@ export function JobCard({
               size='sm'
               onClick={handleDelete}
               disabled={isLoading}
-              className='text-destructive hover:text-destructive/80 hover:bg-destructive/10'
+              className='text-destructive hover:text-destructive/80 hover:bg-destructive/10 cursor-pointer'
             >
               <Trash2 className='w-3 h-3 mr-1' />
               Delete

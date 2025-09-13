@@ -12,7 +12,16 @@ import {
   Timestamp,
 } from 'firebase/firestore';
 import app from '@/firebase/config';
-import { Job, IJobDoc, Resume, ResumeDoc, Profile, ProfileDoc } from './types';
+import {
+  Job,
+  IJobDoc,
+  Resume,
+  ResumeDoc,
+  Profile,
+  ProfileDoc,
+  UserProfile,
+  UserProfileDoc,
+} from './types';
 
 const db = getFirestore(app);
 
@@ -153,4 +162,58 @@ export const updateProfile = async (
 export const deleteProfile = async (profileId: string): Promise<void> => {
   const profileRef = doc(db, 'profiles', profileId);
   await deleteDoc(profileRef);
+};
+
+// User Profile services
+export const createUserProfile = async (
+  userProfile: Omit<UserProfile, 'id' | 'createdAt' | 'updatedAt'>
+): Promise<UserProfileDoc> => {
+  const newUserProfile = {
+    ...userProfile,
+    createdAt: Timestamp.now(),
+    updatedAt: Timestamp.now(),
+  };
+
+  const docRef = await addDoc(collection(db, 'userProfiles'), newUserProfile);
+  return { id: docRef.id, ...newUserProfile };
+};
+
+export const getUserProfileByUserId = async (
+  userId: string
+): Promise<UserProfileDoc | null> => {
+  try {
+    const userProfilesRef = collection(db, 'userProfiles');
+    const q = query(userProfilesRef, where('userId', '==', userId));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      return null;
+    }
+
+    const doc = querySnapshot.docs[0];
+    return {
+      id: doc.id,
+      ...doc.data(),
+    } as UserProfileDoc;
+  } catch {
+    return null;
+  }
+};
+
+export const updateUserProfile = async (
+  userProfileId: string,
+  updates: Partial<UserProfile>
+): Promise<void> => {
+  const userProfileRef = doc(db, 'userProfiles', userProfileId);
+  await updateDoc(userProfileRef, {
+    ...updates,
+    updatedAt: Timestamp.now(),
+  });
+};
+
+export const deleteUserProfile = async (
+  userProfileId: string
+): Promise<void> => {
+  const userProfileRef = doc(db, 'userProfiles', userProfileId);
+  await deleteDoc(userProfileRef);
 };

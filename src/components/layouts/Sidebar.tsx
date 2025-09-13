@@ -32,13 +32,13 @@ const mainMenuItems = [
     title: 'Profile',
     href: '/profile',
     icon: User,
-    enabled: false, // No profile page yet
+    enabled: true,
   },
   {
     title: 'Applications',
     href: '/applications',
     icon: Briefcase,
-    enabled: false, // No applications page yet
+    enabled: true,
   },
   {
     title: 'Saved Jobs',
