@@ -34,6 +34,7 @@ export function ProfileLinksSection({
 
     if (!profileForm.profileUrl.trim()) {
       alert('Profile URL is required');
+
       return;
     }
 

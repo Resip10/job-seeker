@@ -18,7 +18,9 @@ export function useForm<T extends Record<string, unknown>>({
   const handleInputChange = useCallback(
     (field: keyof T, value: unknown) => {
       setFormData(prev => ({ ...prev, [field]: value }));
-      if (error) setError('');
+      if (error) {
+        setError('');
+      }
     },
     [error]
   );
@@ -37,6 +39,7 @@ export function useForm<T extends Record<string, unknown>>({
             const firstError = Object.values(validationErrors).find(Boolean);
             if (firstError) {
               setError(firstError);
+
               return;
             }
           }

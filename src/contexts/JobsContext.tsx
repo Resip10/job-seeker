@@ -13,7 +13,7 @@ import {
   getJobsByUserId,
   updateJob,
   deleteJob,
-} from '@/firebase/services/firestore';
+} from '@/firebase/services';
 import { Job, IJobDoc } from '@/firebase/services/types';
 import { Timestamp } from 'firebase/firestore';
 
@@ -35,6 +35,7 @@ export const useJobs = () => {
   if (!context) {
     throw new Error('useJobs must be used within a JobsProvider');
   }
+
   return context;
 };
 
@@ -49,7 +50,9 @@ export const JobsProvider = ({ children }: JobsProviderProps) => {
   const [error, setError] = useState<string | null>(null);
 
   const loadJobs = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     setLoading(true);
     setError(null);
@@ -77,7 +80,9 @@ export const JobsProvider = ({ children }: JobsProviderProps) => {
 
   const addJob = useCallback(
     async (jobData: Omit<Job, 'id' | 'createdAt' | 'updatedAt' | 'userId'>) => {
-      if (!user) throw new Error('User not authenticated');
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
 
       setLoading(true);
       setError(null);

@@ -15,7 +15,7 @@ import { IJobDoc } from '@/firebase/services/types';
 import { JOB_STATUS_OPTIONS } from '@/firebase/services/constants';
 import { useForm } from '@/hooks/useForm';
 import { FormField } from '@/components/ui/form-field';
-import { validateRequired, validateUrl } from '@/lib/utils/form';
+import { validateRequired, validateUrl } from './form';
 
 interface JobFormProps {
   job?: IJobDoc | null;

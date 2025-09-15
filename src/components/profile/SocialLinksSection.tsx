@@ -16,6 +16,37 @@ interface SocialLinksSectionProps {
   userProfile: UserProfileDoc | null;
 }
 
+const socialLinks = [
+  {
+    key: 'linkedinUrl',
+    label: 'LinkedIn',
+    icon: LinkedInIcon,
+    placeholder: 'https://linkedin.com/in/yourname',
+    color: 'text-blue-600',
+  },
+  {
+    key: 'githubUrl',
+    label: 'GitHub',
+    icon: GitHubIcon,
+    placeholder: 'https://github.com/yourname',
+    color: 'text-foreground',
+  },
+  {
+    key: 'twitterUrl',
+    label: 'X (Twitter)',
+    icon: XIcon,
+    placeholder: 'https://x.com/yourname',
+    color: 'text-foreground',
+  },
+  {
+    key: 'website',
+    label: 'Portfolio/Website',
+    icon: Globe,
+    placeholder: 'https://yourportfolio.com',
+    color: 'text-purple-600',
+  },
+];
+
 export function SocialLinksSection({ userProfile }: SocialLinksSectionProps) {
   const { updateUserProfileById } = useProfile();
   const [isEditingLinks, setIsEditingLinks] = useState(false);
@@ -47,39 +78,11 @@ export function SocialLinksSection({ userProfile }: SocialLinksSectionProps) {
     setIsEditingLinks(false);
   };
 
-  const socialLinks = [
-    {
-      key: 'linkedinUrl',
-      label: 'LinkedIn',
-      icon: LinkedInIcon,
-      placeholder: 'https://linkedin.com/in/yourname',
-      color: 'text-blue-600',
-    },
-    {
-      key: 'githubUrl',
-      label: 'GitHub',
-      icon: GitHubIcon,
-      placeholder: 'https://github.com/yourname',
-      color: 'text-foreground',
-    },
-    {
-      key: 'twitterUrl',
-      label: 'X (Twitter)',
-      icon: XIcon,
-      placeholder: 'https://x.com/yourname',
-      color: 'text-foreground',
-    },
-    {
-      key: 'website',
-      label: 'Portfolio/Website',
-      icon: Globe,
-      placeholder: 'https://yourportfolio.com',
-      color: 'text-purple-600',
-    },
-  ];
-
   const getDisplayValue = (value: string) => {
-    if (!value) return null;
+    if (!value) {
+      return null;
+    }
+
     return value.startsWith('http') ? value : `https://${value}`;
   };
 

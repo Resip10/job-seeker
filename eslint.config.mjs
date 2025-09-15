@@ -54,6 +54,11 @@ const eslintConfig = [
       'no-var': 'error',
       'object-shorthand': 'error',
       'prefer-template': 'error',
+      curly: ['error', 'all'], // Require curly braces for all control statements
+      'padding-line-between-statements': [
+        'error',
+        { blankLine: 'always', prev: '*', next: 'return' }
+      ], // Require empty line before return statements
     },
   },
 ];

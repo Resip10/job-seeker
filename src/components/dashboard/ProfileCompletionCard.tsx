@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Target, X } from 'lucide-react';
 import { UserProfileDoc } from '@/firebase/services/types';
+import { useProfileCompletion } from './hooks/useProfileCompletion';
 import Link from 'next/link';
 
 interface ProfileCompletionCardProps {
@@ -14,62 +15,19 @@ interface ProfileCompletionCardProps {
 export function ProfileCompletionCard({
   userProfile,
 }: ProfileCompletionCardProps) {
-  const [isProfileProgressClosed, setIsProfileProgressClosed] = useState(false);
-
-  // Calculate profile completion percentage
-  const getProfileCompletion = () => {
-    const sections = [
-      userProfile?.firstName && userProfile?.lastName,
-      userProfile?.bio,
-      userProfile?.location,
-      userProfile?.phone,
-      userProfile?.website,
-      userProfile?.experience && userProfile.experience.length > 0,
-      userProfile?.education && userProfile.education.length > 0,
-      userProfile?.skills && userProfile.skills.length > 0,
-      userProfile?.resumeUrl,
-    ];
-
-    const completedSections = sections.filter(Boolean).length;
-    return Math.round((completedSections / sections.length) * 100);
-  };
-
-  const completionPercentage = getProfileCompletion();
-
-  // Load close state from localStorage on component mount
-  useEffect(() => {
-    const storedCloseState = localStorage.getItem('profile-progress-closed');
-    if (storedCloseState === 'true') {
-      setIsProfileProgressClosed(true);
-    }
-  }, []);
-
-  // Reset close state when profile completion changes significantly
-  useEffect(() => {
-    const lastCompletion = localStorage.getItem('last-profile-completion');
-    const currentCompletion = completionPercentage.toString();
-
-    // If completion dropped significantly (more than 20%), show the progress again
-    if (
-      lastCompletion &&
-      parseInt(lastCompletion) - completionPercentage > 20
-    ) {
-      setIsProfileProgressClosed(false);
-      localStorage.removeItem('profile-progress-closed');
-    }
-
-    // Store current completion for next comparison
-    localStorage.setItem('last-profile-completion', currentCompletion);
-  }, [completionPercentage]);
+  const isProfileProgressClosed = useRef(
+    localStorage.getItem('profile-progress-closed') ?? false
+  );
+  const { completionPercentage, isLoading } = useProfileCompletion(userProfile);
 
   // Handle closing the profile progress section
   const handleCloseProfileProgress = () => {
-    setIsProfileProgressClosed(true);
+    isProfileProgressClosed.current = true;
     localStorage.setItem('profile-progress-closed', 'true');
   };
 
   // Don't render if closed
-  if (isProfileProgressClosed) {
+  if (isProfileProgressClosed.current || isLoading) {
     return null;
   }
 
@@ -94,7 +52,7 @@ export function ProfileCompletionCard({
                 </div>
               </div>
 
-              {/* Compact Progress Bar */}
+              {/* Progress Bar */}
               <div className='w-full bg-gray-200 rounded-full h-1.5 mb-2'>
                 <div
                   className='bg-gradient-to-r from-blue-500 to-indigo-500 h-1.5 rounded-full transition-all duration-500'

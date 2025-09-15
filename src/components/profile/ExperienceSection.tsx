@@ -26,6 +26,7 @@ import {
   Calendar as CalendarIcon,
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { toDateInputFormat } from '@/lib/utils/date';
 
 interface ExperienceSectionProps {
   userProfile: UserProfileDoc | null;
@@ -80,10 +81,8 @@ export function ExperienceSection({ userProfile }: ExperienceSectionProps) {
     try {
       const experienceData = {
         ...formData,
-        startDate: formData.startDate?.toISOString().split('T')[0] || '',
-        endDate: formData.current
-          ? ''
-          : formData.endDate?.toISOString().split('T')[0] || '',
+        startDate: toDateInputFormat(formData.startDate),
+        endDate: formData.current ? '' : toDateInputFormat(formData.endDate),
       };
 
       const newExperience = editingExpId

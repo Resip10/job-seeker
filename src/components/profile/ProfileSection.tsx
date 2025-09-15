@@ -61,17 +61,21 @@ export function ProfileSection() {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     // Validate file type
     if (file.type !== 'application/pdf') {
       alert('Please upload a PDF file');
+
       return;
     }
 
     // Validate file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
       alert('File size must be less than 5MB');
+
       return;
     }
 
@@ -79,6 +83,7 @@ export function ProfileSection() {
     try {
       if (!user) {
         alert('You must be logged in to upload files');
+
         return;
       }
 
@@ -105,6 +110,7 @@ export function ProfileSection() {
 
     if (!profileForm.profileUrl.trim()) {
       alert('Profile URL is required');
+
       return;
     }
 

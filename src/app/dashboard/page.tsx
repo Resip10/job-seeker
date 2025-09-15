@@ -9,8 +9,8 @@ import { ProfileProvider, useProfile } from '@/contexts/ProfileContext';
 import { SummaryCard } from '@/components/dashboard/SummaryCard';
 import { OverviewSection } from '@/components/dashboard/OverviewSection';
 import { ProfileCompletionCard } from '@/components/dashboard/ProfileCompletionCard';
-import { useStatusCounts } from '@/hooks/useStatusCounts';
-import { useUserName } from '@/hooks/useUserName';
+import { useStatusCounts } from '@/components/dashboard/hooks/useStatusCounts';
+import { useUserName } from '@/components/dashboard/hooks/useUserName';
 import { formatWeekdayDate, getTimeOfDay } from '@/lib/utils/date';
 
 function DashboardContent() {

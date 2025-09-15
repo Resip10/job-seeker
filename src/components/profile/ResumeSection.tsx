@@ -33,17 +33,21 @@ export function ResumeSection({ userProfile }: ResumeSectionProps) {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     // Validate file type
     if (file.type !== 'application/pdf') {
       alert('Please upload a PDF file');
+
       return;
     }
 
     // Validate file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
       alert('File size must be less than 5MB');
+
       return;
     }
 
@@ -170,8 +174,13 @@ export function ResumeSection({ userProfile }: ResumeSectionProps) {
             resumes
               .sort((a, b) => {
                 // Active resume (matching userProfile.resumeUrl) comes first
-                if (a.fileUrl === userProfile?.resumeUrl) return -1;
-                if (b.fileUrl === userProfile?.resumeUrl) return 1;
+                if (a.fileUrl === userProfile?.resumeUrl) {
+                  return -1;
+                }
+                if (b.fileUrl === userProfile?.resumeUrl) {
+                  return 1;
+                }
+
                 // Then sort by upload date (newest first)
                 return (
                   new Date(b.uploadedAt.toDate()).getTime() -

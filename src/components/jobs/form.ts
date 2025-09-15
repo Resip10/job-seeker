@@ -9,6 +9,7 @@ export const validateRequired = (
   if (!value?.trim()) {
     return `${fieldName} is required`;
   }
+
   return null;
 };
 
@@ -17,6 +18,7 @@ export const validateEmail = (email: string): string | null => {
   if (!emailRegex.test(email)) {
     return 'Please enter a valid email address';
   }
+
   return null;
 };
 
@@ -24,6 +26,7 @@ export const validatePassword = (password: string): string | null => {
   if (password.length < 6) {
     return 'Password must be at least 6 characters long';
   }
+
   return null;
 };
 
@@ -34,12 +37,14 @@ export const validatePasswordMatch = (
   if (password !== confirmPassword) {
     return 'Passwords do not match';
   }
+
   return null;
 };
 
 export const validateUrl = (url: string): string | null => {
   try {
     new URL(url);
+
     return null;
   } catch {
     return 'Please enter a valid URL';
@@ -55,6 +60,8 @@ export const createFieldChangeHandler = <T extends Record<string, unknown>>(
 ) => {
   return (field: keyof T, value: unknown) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    if (setError) setError('');
+    if (setError) {
+      setError('');
+    }
   };
 };

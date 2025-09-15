@@ -14,6 +14,7 @@ export const uploadFile = async (file: File, path: string): Promise<string> => {
   const storageRef = ref(storage, path);
   const snapshot = await uploadBytes(storageRef, file);
   const downloadURL = await getDownloadURL(snapshot.ref);
+
   return downloadURL;
 };
 
@@ -30,6 +31,7 @@ export const generateUserFilePath = (
 ): string => {
   const timestamp = Date.now();
   const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_');
+
   return `resumes/${userId}/${timestamp}_${sanitizedFileName}`;
 };
 
@@ -40,5 +42,6 @@ export const generateProfileImagePath = (
 ): string => {
   const timestamp = Date.now();
   const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_');
+
   return `profile-images/${userId}/${timestamp}_${sanitizedFileName}`;
 };

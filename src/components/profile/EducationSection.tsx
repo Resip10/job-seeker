@@ -25,6 +25,7 @@ import {
   Calendar as CalendarIcon,
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { toDateInputFormat } from '@/lib/utils/date';
 
 interface EducationSectionProps {
   userProfile: UserProfileDoc | null;
@@ -79,10 +80,8 @@ export function EducationSection({ userProfile }: EducationSectionProps) {
     try {
       const educationData = {
         ...formData,
-        startDate: formData.startDate?.toISOString().split('T')[0] || '',
-        endDate: formData.current
-          ? ''
-          : formData.endDate?.toISOString().split('T')[0] || '',
+        startDate: toDateInputFormat(formData.startDate),
+        endDate: formData.current ? '' : toDateInputFormat(formData.endDate),
       };
 
       const newEducation = editingEduId

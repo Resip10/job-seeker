@@ -20,7 +20,7 @@ import {
   getUserProfileByUserId,
   updateUserProfile,
   deleteUserProfile,
-} from '@/firebase/services/firestore';
+} from '@/firebase/services';
 import {
   ResumeDoc,
   ProfileDoc,
@@ -66,6 +66,7 @@ export const useProfile = () => {
   if (!context) {
     throw new Error('useProfile must be used within a ProfileProvider');
   }
+
   return context;
 };
 
@@ -89,7 +90,9 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({
 
   // Load profiles when user changes
   const loadProfiles = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     setLoading(true);
     setError(null);
@@ -124,7 +127,9 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({
 
   const addResume = useCallback(
     async (resumeData: Omit<ResumeDoc, 'id' | 'uploadedAt' | 'userId'>) => {
-      if (!user) throw new Error('User not authenticated');
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
 
       setLoading(true);
       setError(null);
@@ -164,7 +169,9 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({
 
   const addProfile = useCallback(
     async (profileData: Omit<ProfileDoc, 'id' | 'createdAt' | 'userId'>) => {
-      if (!user) throw new Error('User not authenticated');
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
 
       setLoading(true);
       setError(null);
@@ -232,7 +239,9 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({
         'id' | 'createdAt' | 'updatedAt' | 'userId'
       >
     ) => {
-      if (!user) throw new Error('User not authenticated');
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
 
       setLoading(true);
       setError(null);

@@ -12,6 +12,12 @@ import {
 } from 'lucide-react';
 import { UserProfileDoc } from '@/firebase/services/types';
 import { useProfile } from '@/contexts/ProfileContext';
+import {
+  getExperienceYears,
+  getLatestJobTitle,
+  getLatestEducation,
+  getActiveResume,
+} from './utils';
 
 interface OverviewSectionProps {
   userProfile: UserProfileDoc | null;
@@ -19,64 +25,10 @@ interface OverviewSectionProps {
 
 export function OverviewSection({ userProfile }: OverviewSectionProps) {
   const { resumes } = useProfile();
-
-  // Calculate total years of experience
-  const getExperienceYears = () => {
-    if (!userProfile?.experience || userProfile.experience.length === 0)
-      return 0;
-
-    const now = new Date();
-    let totalYears = 0;
-
-    userProfile.experience.forEach(exp => {
-      const startDate = new Date(exp.startDate);
-      const endDate = exp.current ? now : new Date(exp.endDate || '');
-      const years =
-        (endDate.getTime() - startDate.getTime()) /
-        (1000 * 60 * 60 * 24 * 365.25);
-      totalYears += Math.max(0, years);
-    });
-
-    return Math.floor(totalYears);
-  };
-
-  // Get latest job title
-  const getLatestJobTitle = () => {
-    if (!userProfile?.experience || userProfile.experience.length === 0)
-      return null;
-
-    // Sort by start date (most recent first)
-    const sortedExperience = [...userProfile.experience].sort(
-      (a, b) =>
-        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-    );
-
-    return sortedExperience[0];
-  };
-
-  // Get latest education
-  const getLatestEducation = () => {
-    if (!userProfile?.education || userProfile.education.length === 0)
-      return null;
-
-    // Sort by start date (most recent first)
-    const sortedEducation = [...userProfile.education].sort(
-      (a, b) =>
-        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-    );
-
-    return sortedEducation[0];
-  };
-
-  // Get active resume
-  const getActiveResume = () => {
-    if (!userProfile?.resumeUrl) return null;
-    return resumes.find(resume => resume.fileUrl === userProfile.resumeUrl);
-  };
-
-  const activeResume = getActiveResume();
-  const latestJob = getLatestJobTitle();
-  const latestEducation = getLatestEducation();
+  const experienceYears = getExperienceYears(userProfile);
+  const latestJob = getLatestJobTitle(userProfile);
+  const latestEducation = getLatestEducation(userProfile);
+  const activeResume = getActiveResume(userProfile, resumes);
 
   return (
     <div className='space-y-6'>
@@ -99,7 +51,7 @@ export function OverviewSection({ userProfile }: OverviewSectionProps) {
                       {latestJob.position}
                     </p>
                     <p className='text-xs text-text-light'>
-                      {getExperienceYears()}+ years •{' '}
+                      {experienceYears}+ years •{' '}
                       {userProfile?.experience?.length || 0} position
                       {(userProfile?.experience?.length || 0) !== 1 ? 's' : ''}
                     </p>
@@ -107,7 +59,7 @@ export function OverviewSection({ userProfile }: OverviewSectionProps) {
                 ) : (
                   <>
                     <p className='text-2xl font-bold text-text-dark'>
-                      {getExperienceYears()}+ years
+                      {experienceYears}+ years
                     </p>
                     <p className='text-xs text-text-light'>
                       {userProfile?.experience?.length || 0} position

@@ -30,6 +30,7 @@ export const signUpWithEmail = async (
 ): Promise<UserCredential> => {
   try {
     const { email, password } = signupData;
+
     return await createUserWithEmailAndPassword(auth, email, password);
   } catch (error: unknown) {
     const authError = error as AuthError;
@@ -43,6 +44,7 @@ export const signInWithEmail = async (
 ): Promise<UserCredential> => {
   try {
     const { email, password } = loginData;
+
     return await signInWithEmailAndPassword(auth, email, password);
   } catch (error: unknown) {
     const authError = error as AuthError;

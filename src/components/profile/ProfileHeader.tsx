@@ -109,17 +109,21 @@ export function ProfileHeader({ userProfile, user }: ProfileHeaderProps) {
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
       alert('Please select an image file (JPG, PNG, or GIF)');
+
       return;
     }
 
     // Validate file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
       alert('Image size must be less than 5MB');
+
       return;
     }
 

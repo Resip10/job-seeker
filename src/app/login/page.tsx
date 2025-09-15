@@ -50,7 +50,9 @@ export default function LoginPage() {
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    if (error) setError('');
+    if (error) {
+      setError('');
+    }
   };
 
   return (

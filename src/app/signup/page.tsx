@@ -52,6 +52,7 @@ export default function SignupPage() {
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match. Please try again.');
       setIsLoading(false);
+
       return;
     }
 
@@ -59,6 +60,7 @@ export default function SignupPage() {
     if (formData.password.length < 6) {
       setError('Password should be at least 6 characters long.');
       setIsLoading(false);
+
       return;
     }
 
@@ -78,7 +80,9 @@ export default function SignupPage() {
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    if (error) setError('');
+    if (error) {
+      setError('');
+    }
   };
 
   return (
