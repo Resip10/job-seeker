@@ -25,6 +25,8 @@ A modern, comprehensive job application management platform built for job seeker
 - **Firestore** - NoSQL database for real-time data synchronization
 - **Firebase Auth** - Secure user authentication and session management
 - **Firebase Storage** - Cloud file storage for resumes and images
+- **Firebase Cloud Functions** - Serverless backend functions for AI analysis
+- **Google Gemini AI** - Advanced AI integration for job description analysis
 
 ### State Management & Data Flow
 
@@ -68,13 +70,33 @@ A modern, comprehensive job application management platform built for job seeker
    NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
    ```
 
-4. **Run the development server**
+4. **Set up Firebase Cloud Functions (for AI features)**
 
    ```bash
+   cd functions
+   npm install
+   ```
+
+   Configure the Gemini API key secret:
+
+   ```bash
+   firebase functions:secrets:set GEMINI_API_KEY
+   ```
+
+   Deploy the functions:
+
+   ```bash
+   firebase deploy --only functions
+   ```
+
+5. **Run the development server**
+
+   ```bash
+   cd .. # Return to project root
    npm run dev
    ```
 
-5. **Open your browser**
+6. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
 ## 📜 Available Scripts
@@ -90,6 +112,15 @@ A modern, comprehensive job application management platform built for job seeker
 | `npm run format:check` | Check if files are formatted correctly          |
 | `npm run type-check`   | Run TypeScript type checking                    |
 | `npm run check-all`    | Run type-check, lint, and format-check together |
+
+### Firebase Functions Scripts (run from `/functions` directory)
+
+| Command          | Description                          |
+| ---------------- | ------------------------------------ |
+| `npm run build`  | Build Cloud Functions for deployment |
+| `npm run dev`    | Start Functions development server   |
+| `npm run deploy` | Deploy functions to Firebase         |
+| `npm run logs`   | View Cloud Functions logs            |
 
 ## 🔧 Configuration
 
@@ -157,6 +188,12 @@ service firebase.storage {
 ```
 src/
 ├── app/                    # Next.js App Router pages
+│   ├── ai-analysis/        # AI-powered job description analysis
+│   │   ├── components/     # Analysis-specific components
+│   │   │   ├── AnalysisResults.tsx  # Display analysis results
+│   │   │   └── JobInputForm.tsx     # Job description input form
+│   │   ├── utils.ts        # Analysis utility functions
+│   │   └── page.tsx        # Main AI analysis page
 │   ├── applications/       # Job application management page
 │   ├── dashboard/          # Main dashboard with overview
 │   ├── login/             # User authentication
@@ -217,11 +254,15 @@ src/
 ├── firebase/              # Firebase configuration and services
 │   ├── config.ts          # Firebase app configuration
 │   └── services/          # Firebase service layer
+│       ├── aiAnalysis.ts  # AI job analysis service
 │       ├── constants.ts   # Application constants
 │       ├── error-handling.ts # Error handling utilities
-│       ├── firestore.ts   # Firestore database operations
+│       ├── jobs.ts        # Job applications service
+│       ├── profiles.ts    # User profiles service
+│       ├── resumes.ts     # Resume management service
 │       ├── storage.ts     # Firebase Storage operations
 │       ├── types.ts       # TypeScript interfaces
+│       ├── userProfiles.ts # User profile data service
 │       └── validation.ts  # Data validation utilities
 ├── hooks/                 # Custom React hooks
 │   ├── useConfirmation.ts # Confirmation dialog hook
@@ -248,6 +289,16 @@ src/
 ├── tailwind.config.ts    # Tailwind CSS configuration
 ├── tsconfig.json         # TypeScript configuration
 └── package.json          # Dependencies and scripts
+
+# Firebase Cloud Functions
+functions/
+├── src/
+│   ├── index.ts           # Main Cloud Functions entry point
+│   ├── helpers.ts         # Utility functions for job processing
+│   └── prompts.ts         # AI prompt templates and formatting
+├── package.json           # Functions dependencies
+├── tsconfig.json          # TypeScript configuration for functions
+└── .eslintrc.js          # ESLint configuration for functions
 ```
 
 ## 🚀 Getting Started
@@ -270,8 +321,9 @@ src/
 1. **Sign Up** - Create a new account with your email
 2. **Complete Your Profile** - Add personal information, experience, education, and skills
 3. **Upload Your Resume** - Store different versions of your resume
-4. **Add Job Applications** - Start tracking your job applications
-5. **Monitor Progress** - Use the dashboard to track your application status and profile completion
+4. **Try AI Job Analysis** - Paste a job description to get AI-powered insights and recommendations
+5. **Add Job Applications** - Start tracking your job applications with insights from AI analysis
+6. **Monitor Progress** - Use the dashboard to track your application status and profile completion
 
 ## 🤝 Contributing
 
