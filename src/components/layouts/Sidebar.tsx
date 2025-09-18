@@ -14,6 +14,7 @@ import {
   Settings,
   PanelLeft,
   LogOut,
+  Brain,
 } from 'lucide-react';
 import { signOutUser } from '@/lib/auth';
 
@@ -38,6 +39,12 @@ const mainMenuItems = [
     title: 'Applications',
     href: '/applications',
     icon: Briefcase,
+    enabled: true,
+  },
+  {
+    title: 'AI Job Analysis',
+    href: '/ai-analysis',
+    icon: Brain,
     enabled: true,
   },
   {
