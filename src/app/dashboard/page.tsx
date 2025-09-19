@@ -6,11 +6,11 @@ import { PrivateLayout } from '@/components/layouts/PrivateLayout';
 import { AppLayout } from '@/components/layouts/AppLayout';
 import { JobsProvider, useJobs } from '@/contexts/JobsContext';
 import { ProfileProvider, useProfile } from '@/contexts/ProfileContext';
-import { SummaryCard } from '@/components/dashboard/SummaryCard';
-import { OverviewSection } from '@/components/dashboard/OverviewSection';
-import { ProfileCompletionCard } from '@/components/dashboard/ProfileCompletionCard';
-import { useStatusCounts } from '@/components/dashboard/hooks/useStatusCounts';
-import { useUserName } from '@/components/dashboard/hooks/useUserName';
+import { SummaryCard } from '@/components/application-status/SummaryCard';
+import { OverviewSection } from './components/OverviewSection';
+import { ProfileCompletionCard } from './components/ProfileCompletionCard';
+import { useStatusCounts } from '@/components/application-status/hooks/useStatusCounts';
+import { useUserName } from './components/hooks/useUserName';
 import { formatWeekdayDate, getTimeOfDay } from '@/lib/utils/date';
 
 function DashboardContent() {

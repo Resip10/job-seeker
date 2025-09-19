@@ -3,7 +3,7 @@
 import { PrivateLayout } from '@/components/layouts/PrivateLayout';
 import { AppLayout } from '@/components/layouts/AppLayout';
 import { ProfileProvider } from '@/contexts/ProfileContext';
-import { ProfilePageContent } from '@/components/profile/ProfilePageContent';
+import { ProfilePageContent } from './components/ProfilePageContent';
 
 export default function ProfilePage() {
   return (

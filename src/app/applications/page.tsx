@@ -8,10 +8,10 @@ import { PrivateLayout } from '@/components/layouts/PrivateLayout';
 import { AppLayout } from '@/components/layouts/AppLayout';
 import { JobsProvider, useJobs } from '@/contexts/JobsContext';
 import { ProfileProvider } from '@/contexts/ProfileContext';
-import { JobList } from '@/components/jobs/JobList';
-import { JobForm } from '@/components/jobs/JobForm';
-import { SummaryCard } from '@/components/dashboard/SummaryCard';
-import { useStatusCounts } from '@/components/dashboard/hooks/useStatusCounts';
+import { JobList } from './components/JobList';
+import { JobForm } from './components/JobForm';
+import { SummaryCard } from '@/components/application-status/SummaryCard';
+import { useStatusCounts } from '@/components/application-status/hooks/useStatusCounts';
 import { IJobDoc } from '@/firebase/services/types';
 
 function ApplicationsContent() {
