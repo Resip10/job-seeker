@@ -10,11 +10,9 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    // Redirect root path to login page
     router.replace('/login');
   }, [router]);
 
-  // Show loading state while redirecting
   return (
     <div className='min-h-screen flex items-center justify-center bg-gray-50'>
       <div className='text-center'>

@@ -27,7 +27,6 @@ export function ProfilePageContent() {
   return (
     <div className='h-full bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
-        {/* Header Section */}
         <div className='mb-6'>
           <div>
             <h1 className='text-3xl font-bold text-text-dark'>Profile</h1>
@@ -37,7 +36,6 @@ export function ProfilePageContent() {
           </div>
         </div>
 
-        {/* Error Display */}
         {error && (
           <Alert variant='destructive' className='mb-6'>
             <AlertCircle className='h-4 w-4' />
@@ -52,10 +50,8 @@ export function ProfilePageContent() {
           </Alert>
         )}
 
-        {/* Profile Header */}
         <ProfileHeader userProfile={userProfile} user={user} />
 
-        {/* Main Content */}
         <div className='space-y-6 mt-6'>
           <SkillsSection userProfile={userProfile} />
 

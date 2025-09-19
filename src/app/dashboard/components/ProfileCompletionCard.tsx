@@ -21,18 +21,14 @@ export function ProfileCompletionCard({
   );
   const { completionPercentage, isLoading } = useProfileCompletion(userProfile);
 
-  // Handle closing the profile progress section
   const handleCloseProfileProgress = () => {
     isProfileProgressClosed.current = true;
     localStorage.setItem('profile-progress-closed', 'true');
   };
 
-  // Don't render if closed
   if (isProfileProgressClosed.current) {
     return null;
   }
-
-  // Show skeleton loading state
   if (isLoading) {
     return <ProfileCompletionCardSkeleton />;
   }

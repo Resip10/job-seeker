@@ -31,7 +31,6 @@ export function OverviewSection({ userProfile }: OverviewSectionProps) {
   const latestEducation = getLatestEducation(userProfile);
   const activeResume = getActiveResume(userProfile, resumes);
 
-  // Show skeleton loading state
   if (loading) {
     return <OverviewSectionSkeleton />;
   }
