@@ -1,10 +1,20 @@
-// Simple error handling for MVP
-export const handleError = (error: unknown, operation: string): never => {
+import { showErrorToast } from '@/lib/toast';
+
+export const handleError = (
+  error: unknown,
+  operation: string,
+  showToast = false
+): never => {
   console.error(`${operation} error:`, error);
 
-  if (error instanceof Error) {
-    throw new Error(`${operation} failed: ${error.message}`);
+  const errorMessage =
+    error instanceof Error
+      ? `${operation} failed: ${error.message}`
+      : `${operation} failed: Unknown error`;
+
+  if (showToast) {
+    showErrorToast(new Error(errorMessage));
   }
 
-  throw new Error(`${operation} failed: Unknown error`);
+  throw new Error(errorMessage);
 };

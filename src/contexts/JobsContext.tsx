@@ -15,6 +15,7 @@ import {
   deleteJob,
 } from '@/firebase/services';
 import { Job, IJobDoc } from '@/firebase/services/types';
+import { showToast } from '@/lib/toast';
 import { Timestamp } from 'firebase/firestore';
 
 interface JobsContextType {
@@ -93,6 +94,10 @@ export const JobsProvider = ({ children }: JobsProviderProps) => {
           userId: user.uid,
         });
         setJobs(prev => [newJob, ...prev]);
+        showToast.success(
+          'Job application added!',
+          `Added "${jobData.title}" to your applications.`
+        );
       } catch (err: unknown) {
         const error = err as Error;
         setError(error.message || 'Failed to add job');
@@ -118,6 +123,10 @@ export const JobsProvider = ({ children }: JobsProviderProps) => {
               : job
           )
         );
+        showToast.success(
+          'Job application updated!',
+          'Your changes have been saved.'
+        );
       } catch (err: unknown) {
         const error = err as Error;
         setError(error.message || 'Failed to update job');
@@ -136,6 +145,10 @@ export const JobsProvider = ({ children }: JobsProviderProps) => {
     try {
       await deleteJob(jobId);
       setJobs(prev => prev.filter(job => job.id !== jobId));
+      showToast.success(
+        'Job application deleted!',
+        'The application has been removed.'
+      );
     } catch (err: unknown) {
       const error = err as Error;
       setError(error.message || 'Failed to delete job');

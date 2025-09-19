@@ -15,7 +15,6 @@ import { UserProfile, UserProfileDoc } from './types';
 
 const db = getFirestore(app);
 
-// Create a new user profile
 export const createUserProfile = async (
   userProfile: Omit<UserProfile, 'id' | 'createdAt' | 'updatedAt'>
 ): Promise<UserProfileDoc> => {
@@ -30,7 +29,6 @@ export const createUserProfile = async (
   return { id: docRef.id, ...newUserProfile };
 };
 
-// Get user profile by user ID
 export const getUserProfileByUserId = async (
   userId: string
 ): Promise<UserProfileDoc | null> => {
@@ -54,7 +52,6 @@ export const getUserProfileByUserId = async (
   }
 };
 
-// Update a user profile
 export const updateUserProfile = async (
   userProfileId: string,
   updates: Partial<UserProfile>
@@ -66,7 +63,6 @@ export const updateUserProfile = async (
   });
 };
 
-// Delete a user profile
 export const deleteUserProfile = async (
   userProfileId: string
 ): Promise<void> => {

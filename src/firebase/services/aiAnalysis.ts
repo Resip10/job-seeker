@@ -26,10 +26,7 @@ export const analyzeJobDescription = async (
   jobDescription: string
 ): Promise<JobAnalysisResponse> => {
   try {
-    // Get Firebase Functions instance
     const functions = getFunctions(app);
-
-    // Connect to emulator for development (only if not using production)
     if (
       process.env.NODE_ENV === 'development' &&
       !process.env.NEXT_PUBLIC_USE_PRODUCTION_FUNCTIONS
@@ -51,7 +48,6 @@ export const analyzeJobDescription = async (
       }
     }
 
-    // Create callable function reference
     const analyzeJob = httpsCallable<JobAnalysisRequest, JobAnalysisResponse>(
       functions,
       'analyzeJobDescription'
@@ -60,7 +56,6 @@ export const analyzeJobDescription = async (
       console.log('🔧 Callable function reference created');
     }
 
-    // Call the function
     if (process.env.NODE_ENV === 'development') {
       console.log('🔧 About to call callable function...');
     }
@@ -76,7 +71,6 @@ export const analyzeJobDescription = async (
       console.error('Error stack:', error.stack);
     }
 
-    // Handle Firebase function errors
     if (
       error &&
       typeof error === 'object' &&
@@ -87,8 +81,6 @@ export const analyzeJobDescription = async (
         `Firebase function error (${error.code}): ${error.message}`
       );
     }
-
-    // Handle other errors
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error';
     throw new Error(`Failed to analyze job description: ${errorMessage}`);

@@ -17,6 +17,7 @@ import { Eye, EyeOff, Briefcase, Mail, Lock, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { JobSeekerHero } from '@/components/jobSeekerHero';
 import { signInWithEmail, type LoginData } from '@/lib/auth';
+import { showToast } from '@/lib/toast';
 import { PublicLayout } from '@/components/layouts/PublicLayout';
 
 export default function LoginPage() {
@@ -35,10 +36,8 @@ export default function LoginPage() {
     setError('');
 
     try {
-      // Sign in with Firebase
       await signInWithEmail(formData as LoginData);
-
-      // Redirect to dashboard after successful login
+      showToast.success('Welcome back!', 'You have successfully signed in.');
       router.push('/dashboard');
     } catch (err: unknown) {
       const error = err as Error;

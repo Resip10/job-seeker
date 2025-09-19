@@ -26,6 +26,7 @@ import {
   ProfileDoc,
   UserProfileDoc,
 } from '@/firebase/services/types';
+import { showToast } from '@/lib/toast';
 
 interface ProfileContextType {
   resumes: ResumeDoc[];
@@ -140,6 +141,10 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({
           userId: user.uid,
         });
         setResumes(prev => [newResume, ...prev]);
+        showToast.success(
+          'Resume uploaded!',
+          'Your resume has been added to your profile.'
+        );
       } catch (err: unknown) {
         const error = err as Error;
         setError(error.message || 'Failed to add resume');
@@ -271,6 +276,10 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({
       try {
         await updateUserProfile(userProfileId, updates);
         setUserProfile(prev => (prev ? { ...prev, ...updates } : null));
+        showToast.success(
+          'Profile updated!',
+          'Your profile changes have been saved.'
+        );
       } catch (err: unknown) {
         const error = err as Error;
         setError(error.message || 'Failed to update user profile');

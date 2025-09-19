@@ -17,6 +17,8 @@ import {
   Building2,
   FileText,
 } from 'lucide-react';
+import { Tooltip, TooltipTrigger } from '@/components/ui/tooltip';
+import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import { IJobDoc } from '@/firebase/services/types';
 import { formatDate } from '@/lib/utils/date';
 
@@ -55,17 +57,17 @@ const getStatusVariant = (status: string) => {
 const getStatusClassName = (status: string) => {
   switch (status) {
     case 'applied':
-      return 'bg-primary/10 text-primary border-primary/20';
+      return 'bg-blue-50 text-blue-700 border-blue-200 font-medium';
     case 'interview':
-      return 'bg-warning/10 text-warning border-warning/20';
+      return 'bg-yellow-50 text-yellow-700 border-yellow-200 font-medium';
     case 'offer':
-      return 'bg-success/10 text-success border-success/20';
+      return 'bg-green-50 text-green-700 border-green-200 font-medium';
     case 'rejected':
-      return 'bg-destructive/10 text-destructive border-destructive/20';
+      return 'bg-red-50 text-red-700 border-red-200 font-medium';
     case 'withdrawn':
-      return 'bg-text-light/10 text-text-light border-text-light/20';
+      return 'bg-gray-50 text-gray-700 border-gray-200 font-medium';
     default:
-      return 'bg-text-light/10 text-text-light border-text-light/20';
+      return 'bg-gray-50 text-gray-700 border-gray-200 font-medium';
   }
 };
 
@@ -84,33 +86,57 @@ export function JobCard({
   };
 
   return (
-    <Card className='hover:shadow-card transition-shadow duration-200'>
-      <CardHeader className='pb-3'>
-        <div className='flex items-start justify-between'>
-          <div className='flex-1 min-w-0'>
-            <CardTitle className='text-h3 text-text-dark truncate'>
-              {job.title}
-            </CardTitle>
-            <CardDescription className='flex items-center gap-1 mt-1'>
-              <Building2 className='w-4 h-4 text-text-light' />
-              <span className='truncate text-text-medium'>{job.company}</span>
-            </CardDescription>
+    <Card className='h-full flex flex-col hover:shadow-card transition-shadow duration-200 gap-1'>
+      <CardHeader>
+        <div className='space-y-3'>
+          <div className='flex items-start justify-between gap-3'>
+            <div className='flex-1 min-w-0'>
+              <div className='flex items-start gap-2 mb-1'>
+                <CardTitle className='text-lg font-semibold text-text-dark leading-tight line-clamp-2 h-12 flex-1'>
+                  {job.title}
+                </CardTitle>
+                {/* Notes Icon with Tooltip */}
+                {job.notes && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className='flex items-center justify-center w-5 h-5 rounded-full bg-blue-50 hover:bg-blue-100 transition-colors cursor-help mt-0.5 flex-shrink-0'>
+                        <FileText className='w-3 h-3 text-blue-600' />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipPrimitive.Portal>
+                      <TooltipPrimitive.Content
+                        side='top'
+                        className='max-w-xs bg-white text-gray-900 border border-gray-200 shadow-lg z-50 rounded-md px-3 py-2 text-xs animate-in fade-in-0 zoom-in-95'
+                        sideOffset={5}
+                      >
+                        <p className='leading-relaxed'>{job.notes}</p>
+                        <TooltipPrimitive.Arrow className='bg-white fill-white border-l border-t border-gray-200 z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45' />
+                      </TooltipPrimitive.Content>
+                    </TooltipPrimitive.Portal>
+                  </Tooltip>
+                )}
+              </div>
+              <CardDescription className='flex items-center gap-1'>
+                <Building2 className='w-4 h-4 text-text-light flex-shrink-0' />
+                <span className='truncate text-text-medium'>{job.company}</span>
+              </CardDescription>
+            </div>
+            <Badge
+              variant={getStatusVariant(job.status)}
+              className={`flex-shrink-0 text-xs px-2 py-1 ${getStatusClassName(job.status)}`}
+            >
+              {STATUS_LABELS[job.status as keyof typeof STATUS_LABELS] ||
+                job.status}
+            </Badge>
           </div>
-          <Badge
-            variant={getStatusVariant(job.status)}
-            className={`ml-2 ${getStatusClassName(job.status)}`}
-          >
-            {STATUS_LABELS[job.status as keyof typeof STATUS_LABELS] ||
-              job.status}
-          </Badge>
         </div>
       </CardHeader>
 
-      <CardContent className='pt-0'>
-        <div className='space-y-3'>
+      <CardContent className='pt-0 flex-1 flex flex-col'>
+        <div className='space-y-3 flex-1'>
           {/* Job Link */}
           <div className='flex items-center gap-2'>
-            <ExternalLink className='w-4 h-4 text-text-light' />
+            <ExternalLink className='w-4 h-4 text-text-light flex-shrink-0' />
             <a
               href={job.link}
               target='_blank'
@@ -121,53 +147,43 @@ export function JobCard({
             </a>
           </div>
 
-          {/* Notes */}
-          {job.notes && (
-            <div className='flex items-start gap-2'>
-              <FileText className='w-4 h-4 text-text-light mt-0.5' />
-              <p className='text-body text-text-medium line-clamp-2'>
-                {job.notes}
-              </p>
-            </div>
-          )}
-
           {/* Dates */}
-          <div className='flex items-center gap-4 text-caption text-text-light'>
+          <div className='flex flex-col gap-1 text-caption text-text-light'>
             <div className='flex items-center gap-1'>
-              <Calendar className='w-3 h-3' />
+              <Calendar className='w-3 h-3 flex-shrink-0' />
               <span>Created: {formatDate(job.createdAt)}</span>
             </div>
             {job.updatedAt && job.updatedAt !== job.createdAt && (
               <div className='flex items-center gap-1'>
-                <Calendar className='w-3 h-3' />
+                <Calendar className='w-3 h-3 flex-shrink-0' />
                 <span>Updated: {formatDate(job.updatedAt)}</span>
               </div>
             )}
           </div>
+        </div>
 
-          {/* Actions */}
-          <div className='flex gap-2 pt-2 border-t border-border'>
-            <Button
-              variant='outline'
-              size='sm'
-              onClick={() => onEdit(job)}
-              disabled={isLoading}
-              className='flex-1 cursor-pointer'
-            >
-              <Edit className='w-3 h-3 mr-1' />
-              Edit
-            </Button>
-            <Button
-              variant='outline'
-              size='sm'
-              onClick={handleDelete}
-              disabled={isLoading}
-              className='text-destructive hover:text-destructive/80 hover:bg-destructive/10 cursor-pointer'
-            >
-              <Trash2 className='w-3 h-3 mr-1' />
-              Delete
-            </Button>
-          </div>
+        {/* Actions - Always at bottom */}
+        <div className='flex gap-2 pt-4 mt-auto border-t border-border'>
+          <Button
+            variant='outline'
+            size='sm'
+            onClick={() => onEdit(job)}
+            disabled={isLoading}
+            className='flex-1 cursor-pointer hover:bg-blue-50 hover:border-blue-200'
+          >
+            <Edit className='w-3 h-3 mr-1' />
+            Edit
+          </Button>
+          <Button
+            variant='outline'
+            size='sm'
+            onClick={handleDelete}
+            disabled={isLoading}
+            className='flex-1 text-red-600 hover:text-red-700 hover:bg-red-50 hover:border-red-200 cursor-pointer'
+          >
+            <Trash2 className='w-3 h-3 mr-1' />
+            Delete
+          </Button>
         </div>
       </CardContent>
     </Card>

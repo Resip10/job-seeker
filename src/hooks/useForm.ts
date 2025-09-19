@@ -1,15 +1,18 @@
 import { useState, useCallback } from 'react';
+import { showToast, showErrorToast } from '@/lib/toast';
 
 interface UseFormOptions<T> {
   initialValues: T;
   onSubmit: (values: T) => Promise<void> | void;
   validate?: (values: T) => Record<keyof T, string> | null;
+  useToasts?: boolean; // Whether to show toast notifications instead of setting error state
 }
 
 export function useForm<T extends Record<string, unknown>>({
   initialValues,
   onSubmit,
   validate,
+  useToasts = false,
 }: UseFormOptions<T>) {
   const [formData, setFormData] = useState<T>(initialValues);
   const [isLoading, setIsLoading] = useState(false);
@@ -18,18 +21,21 @@ export function useForm<T extends Record<string, unknown>>({
   const handleInputChange = useCallback(
     (field: keyof T, value: unknown) => {
       setFormData(prev => ({ ...prev, [field]: value }));
-      if (error) {
+      if (!useToasts && error) {
         setError('');
       }
     },
-    [error]
+    [error, useToasts]
   );
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
       setIsLoading(true);
-      setError('');
+
+      if (!useToasts) {
+        setError('');
+      }
 
       try {
         // Validate if validator provided
@@ -38,7 +44,11 @@ export function useForm<T extends Record<string, unknown>>({
           if (validationErrors) {
             const firstError = Object.values(validationErrors).find(Boolean);
             if (firstError) {
-              setError(firstError);
+              if (useToasts) {
+                showToast.warning('Validation Error', firstError);
+              } else {
+                setError(firstError);
+              }
 
               return;
             }
@@ -48,12 +58,18 @@ export function useForm<T extends Record<string, unknown>>({
         await onSubmit(formData);
       } catch (err: unknown) {
         const error = err as Error;
-        setError(error.message || 'An error occurred');
+        const errorMessage = error.message || 'An error occurred';
+
+        if (useToasts) {
+          showErrorToast(error, errorMessage);
+        } else {
+          setError(errorMessage);
+        }
       } finally {
         setIsLoading(false);
       }
     },
-    [formData, onSubmit, validate]
+    [formData, onSubmit, validate, useToasts]
   );
 
   const resetForm = useCallback(() => {

@@ -4,20 +4,14 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Brain, Send, AlertCircle } from 'lucide-react';
+import { Brain, Send } from 'lucide-react';
 
 interface JobInputFormProps {
   onSubmit: (jobDescription: string) => Promise<void>;
   isLoading: boolean;
-  error: string | null;
 }
 
-export function JobInputForm({
-  onSubmit,
-  isLoading,
-  error,
-}: JobInputFormProps) {
+export function JobInputForm({ onSubmit, isLoading }: JobInputFormProps) {
   const [jobDescription, setJobDescription] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,13 +44,6 @@ export function JobInputForm({
               disabled={isLoading}
             />
           </div>
-
-          {error && (
-            <Alert variant='destructive'>
-              <AlertCircle className='h-4 w-4' />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
 
           <Button
             type='submit'

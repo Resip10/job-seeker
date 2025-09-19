@@ -4,11 +4,13 @@ import { useState } from 'react';
 import { PrivateLayout } from '@/components/layouts/PrivateLayout';
 import { AppLayout } from '@/components/layouts/AppLayout';
 import { ProfileProvider } from '@/contexts/ProfileContext';
-import { Brain } from 'lucide-react';
+import { Brain, AlertCircle } from 'lucide-react';
 import {
   analyzeJobDescription,
   JobAnalysisResponse,
 } from '@/firebase/services';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { showToast, showErrorToast } from '@/lib/toast';
 import { JobInputForm } from './components/JobInputForm';
 import { AnalysisResults } from './components/AnalysisResults';
 
@@ -19,26 +21,44 @@ function AIAnalysisContent() {
 
   const handleJobSubmit = async (jobDescription: string) => {
     if (!jobDescription.trim()) {
-      setError('Please enter a job description');
+      showToast.warning('Please enter a job description');
 
       return;
     }
 
     setIsLoading(true);
-    setError(null);
     setResponse(null);
+    setError(null);
+
+    const loadingToast = showToast.loading('Analyzing job description...');
 
     try {
       const data = await analyzeJobDescription(jobDescription);
       setResponse(data);
-      setError(null);
+      showToast.dismiss(loadingToast);
+      showToast.success('Analysis complete!', 'Your job analysis is ready.');
     } catch (err) {
+      showToast.dismiss(loadingToast);
       if (process.env.NODE_ENV === 'development') {
         console.error('Error calling Firebase function:', err);
       }
-      setError(
-        err instanceof Error ? err.message : 'Failed to analyze job description'
-      );
+
+      // For AI analysis errors, show on page since it might be a service issue
+      // that requires user to understand the limitation
+      const error = err as Error;
+      const errorMessage = error.message || 'Failed to analyze job description';
+
+      if (
+        errorMessage.includes('network') ||
+        errorMessage.includes('timeout') ||
+        errorMessage.includes('unavailable')
+      ) {
+        setError(
+          `AI Analysis Service Issue: ${errorMessage}. Please try again later.`
+        );
+      } else {
+        showErrorToast(err, errorMessage);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -66,12 +86,16 @@ function AIAnalysisContent() {
               </div>
             </div>
 
+            {/* Service Error Display */}
+            {error && (
+              <Alert variant='destructive'>
+                <AlertCircle className='h-4 w-4' />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
             {/* Job Input Form */}
-            <JobInputForm
-              onSubmit={handleJobSubmit}
-              isLoading={isLoading}
-              error={error}
-            />
+            <JobInputForm onSubmit={handleJobSubmit} isLoading={isLoading} />
 
             {/* Analysis Response */}
             {response && <AnalysisResults response={response} />}

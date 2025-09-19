@@ -15,7 +15,6 @@ import { Resume, ResumeDoc } from './types';
 
 const db = getFirestore(app);
 
-// Create a new resume
 export const createResume = async (
   resume: Omit<Resume, 'id' | 'uploadedAt'>
 ): Promise<ResumeDoc> => {

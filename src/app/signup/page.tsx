@@ -26,6 +26,7 @@ import {
 import Link from 'next/link';
 import { JobSeekerHero } from '@/components/jobSeekerHero';
 import { signUpWithEmail, type SignupData } from '@/lib/auth';
+import { showToast } from '@/lib/toast';
 import { PublicLayout } from '@/components/layouts/PublicLayout';
 
 export default function SignupPage() {
@@ -65,10 +66,11 @@ export default function SignupPage() {
     }
 
     try {
-      // Create user with Firebase
       await signUpWithEmail(formData as SignupData);
-
-      // Redirect to dashboard after successful signup
+      showToast.success(
+        'Welcome!',
+        'Your account has been created successfully.'
+      );
       router.push('/dashboard');
     } catch (err: unknown) {
       const error = err as Error;
