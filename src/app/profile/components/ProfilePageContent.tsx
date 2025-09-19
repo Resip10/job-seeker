@@ -11,18 +11,11 @@ import { SkillsSection } from './SkillsSection';
 import { SocialLinksSection } from './SocialLinksSection';
 import { ResumeSection } from './ResumeSection';
 import { ProfileLinksSection } from './ProfileLinksSection';
+import { ProfileHeaderSkeleton } from './skeletons';
 
 export function ProfilePageContent() {
   const { user } = useAuth();
   const { userProfile, loading, error, clearError } = useProfile();
-
-  if (loading) {
-    return (
-      <div className='flex items-center justify-center min-h-screen'>
-        <div className='animate-spin rounded-full h-32 w-32 border-b-2 border-primary' />
-      </div>
-    );
-  }
 
   return (
     <div className='h-full bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100'>
@@ -50,21 +43,25 @@ export function ProfilePageContent() {
           </Alert>
         )}
 
-        <ProfileHeader userProfile={userProfile} user={user} />
+        {loading ? (
+          <ProfileHeaderSkeleton />
+        ) : (
+          <ProfileHeader userProfile={userProfile} user={user} />
+        )}
 
-        <div className='space-y-6 mt-6'>
-          <SkillsSection userProfile={userProfile} />
+        {!loading && (
+          <div className='space-y-6 mt-6'>
+            <SkillsSection userProfile={userProfile} />
+            <ExperienceSection userProfile={userProfile} />
+            <EducationSection userProfile={userProfile} />
 
-          <ExperienceSection userProfile={userProfile} />
+            <SocialLinksSection userProfile={userProfile} />
 
-          <EducationSection userProfile={userProfile} />
+            <ResumeSection userProfile={userProfile} />
 
-          <SocialLinksSection userProfile={userProfile} />
-
-          <ResumeSection userProfile={userProfile} />
-
-          <ProfileLinksSection userProfile={userProfile} />
-        </div>
+            <ProfileLinksSection userProfile={userProfile} />
+          </div>
+        )}
       </div>
     </div>
   );
