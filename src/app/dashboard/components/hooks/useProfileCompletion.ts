@@ -1,8 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { UserProfileDoc } from '@/firebase/services/types';
+import { useProfile } from '@/contexts/ProfileContext';
 
 export function useProfileCompletion(userProfile: UserProfileDoc | null) {
-  const [isLoading, setIsLoading] = useState(true);
+  const { loading } = useProfile();
+
   const completionPercentage = useMemo(() => {
     if (!userProfile) {
       return 0;
@@ -21,10 +23,9 @@ export function useProfileCompletion(userProfile: UserProfileDoc | null) {
     ];
 
     const completedSections = sections.filter(Boolean).length;
-    setIsLoading(false);
 
     return Math.round((completedSections / sections.length) * 100);
   }, [userProfile]);
 
-  return { completionPercentage, isLoading };
+  return { completionPercentage, isLoading: loading };
 }

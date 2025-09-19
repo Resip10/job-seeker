@@ -1,12 +1,22 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Briefcase, Clock, CheckCircle, X, Minus } from 'lucide-react';
 import { StatusItem } from './StatusItem';
+import { SummaryCardSkeleton } from './skeletons';
 
 interface SummaryCardProps {
   statusCounts: Record<string, number>;
+  loading?: boolean;
 }
 
-export function SummaryCard({ statusCounts }: SummaryCardProps) {
+export function SummaryCard({
+  statusCounts,
+  loading = false,
+}: SummaryCardProps) {
+  // Show skeleton loading state
+  if (loading) {
+    return <SummaryCardSkeleton />;
+  }
+
   return (
     <Card className='border border-border shadow-sm p-4'>
       <CardContent>

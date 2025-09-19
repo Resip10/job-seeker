@@ -1,6 +1,7 @@
 'use client';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle } from 'lucide-react';
 import { PrivateLayout } from '@/components/layouts/PrivateLayout';
 import { AppLayout } from '@/components/layouts/AppLayout';
@@ -14,8 +15,8 @@ import { useUserName } from './components/hooks/useUserName';
 import { formatWeekdayDate, getTimeOfDay } from '@/lib/utils/date';
 
 function DashboardContent() {
-  const { userProfile } = useProfile();
-  const { error } = useJobs();
+  const { userProfile, loading: profileLoading } = useProfile();
+  const { error, loading: jobsLoading } = useJobs();
   const statusCounts = useStatusCounts();
   const userName = useUserName();
 
@@ -33,7 +34,12 @@ function DashboardContent() {
                   {formatWeekdayDate()}
                 </div>
                 <h1 className='text-3xl font-bold text-text-dark'>
-                  Good {getTimeOfDay()}, {userName}
+                  Good {getTimeOfDay()},{' '}
+                  {profileLoading ? (
+                    <Skeleton className='inline-block h-8 w-20' />
+                  ) : (
+                    userName
+                  )}
                 </h1>
                 <p className='text-text-medium mt-1'>
                   Welcome to your job search dashboard
@@ -56,7 +62,7 @@ function DashboardContent() {
             <OverviewSection userProfile={userProfile} />
 
             {/* Summary Card */}
-            <SummaryCard statusCounts={statusCounts} />
+            <SummaryCard statusCounts={statusCounts} loading={jobsLoading} />
           </div>
         </div>
       </div>

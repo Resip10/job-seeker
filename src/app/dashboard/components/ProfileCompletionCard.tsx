@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Target, X } from 'lucide-react';
 import { UserProfileDoc } from '@/firebase/services/types';
 import { useProfileCompletion } from './hooks/useProfileCompletion';
+import { ProfileCompletionCardSkeleton } from './skeletons';
 import Link from 'next/link';
 
 interface ProfileCompletionCardProps {
@@ -27,8 +28,13 @@ export function ProfileCompletionCard({
   };
 
   // Don't render if closed
-  if (isProfileProgressClosed.current || isLoading) {
+  if (isProfileProgressClosed.current) {
     return null;
+  }
+
+  // Show skeleton loading state
+  if (isLoading) {
+    return <ProfileCompletionCardSkeleton />;
   }
 
   return (

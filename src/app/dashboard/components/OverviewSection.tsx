@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { UserProfileDoc } from '@/firebase/services/types';
 import { useProfile } from '@/contexts/ProfileContext';
+import { OverviewSectionSkeleton } from './skeletons';
 import {
   getExperienceYears,
   getLatestJobTitle,
@@ -24,11 +25,16 @@ interface OverviewSectionProps {
 }
 
 export function OverviewSection({ userProfile }: OverviewSectionProps) {
-  const { resumes } = useProfile();
+  const { resumes, loading } = useProfile();
   const experienceYears = getExperienceYears(userProfile);
   const latestJob = getLatestJobTitle(userProfile);
   const latestEducation = getLatestEducation(userProfile);
   const activeResume = getActiveResume(userProfile, resumes);
+
+  // Show skeleton loading state
+  if (loading) {
+    return <OverviewSectionSkeleton />;
+  }
 
   return (
     <div className='space-y-6'>
