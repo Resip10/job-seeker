@@ -54,11 +54,8 @@ export function ProfilePageContent() {
             <SkillsSection userProfile={userProfile} />
             <ExperienceSection userProfile={userProfile} />
             <EducationSection userProfile={userProfile} />
-
             <SocialLinksSection userProfile={userProfile} />
-
             <ResumeSection userProfile={userProfile} />
-
             <ProfileLinksSection userProfile={userProfile} />
           </div>
         )}

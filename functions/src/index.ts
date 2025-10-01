@@ -1,33 +1,22 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * import {onCall} from "firebase-functions/v2/https";
- * import {onDocumentWritten} from "firebase-functions/v2/firestore";
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
-
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { initializeApp } from 'firebase-admin/app';
 import { processJobInput } from './helpers';
 import { createJobAnalysisPrompt } from './prompts';
 import { defineSecret } from 'firebase-functions/params';
 import { setGlobalOptions } from 'firebase-functions/v2';
 import { logger } from 'firebase-functions';
+import {
+  executeJobAnalysisTransaction,
+  getTokenUsageStats,
+  resetTokenUsage,
+} from './services/tokenTracker';
 
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
-
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit.
+initializeApp();
 setGlobalOptions({ maxInstances: 10 });
 
-// Define secret for Gemini API key
 const geminiApiKey = defineSecret('GEMINI_API_KEY');
 
-// Callable function - automatically handles CORS and auth
 export const analyzeJobDescription = onCall(
   { secrets: [geminiApiKey] },
   async request => {
@@ -37,57 +26,104 @@ export const analyzeJobDescription = onCall(
       throw new HttpsError('invalid-argument', 'Missing required field: text');
     }
 
+    if (request.auth) {
+      logger.info(`Authenticated request from user: ${request.auth.uid}`);
+    } else {
+      logger.info('Unauthenticated request received');
+    }
+
     const jobInput = data.text;
 
     try {
-      // Initialize Gemini AI with the secret key
-      const genAI = new GoogleGenerativeAI(geminiApiKey.value());
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      logger.info('Starting job analysis process');
 
-      // Process and validate input text
       const jobDescription = processJobInput(jobInput);
       const prompt = createJobAnalysisPrompt(jobDescription);
 
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
+      const genAI = new GoogleGenerativeAI(geminiApiKey.value());
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
-      // JSON parsing
-      let parsedResponse;
-      try {
-        // Clean "```json" blocks
-        const jsonString = text.replace(/```json\n|\n```/g, '');
-        parsedResponse = JSON.parse(jsonString);
-      } catch {
-        // If parsing fails, throw a proper error
-        logger.error('Failed to parse JSON from AI response:', text);
-        throw new HttpsError('internal', 'AI response format is incorrect', {
-          rawResponse: text,
-        });
-      }
+      const processResponse = (text: string) => {
+        let parsedResponse;
+        try {
+          const jsonString = text.replace(/```json\n|\n```/g, '');
+          parsedResponse = JSON.parse(jsonString);
+        } catch {
+          logger.error('Failed to parse JSON from AI response:', text);
+          throw new HttpsError('internal', 'AI response format is incorrect', {
+            rawResponse: text,
+          });
+        }
 
-      // Check if AI determined this is not a job description
-      if (parsedResponse.isJobDescription === false) {
-        throw new HttpsError(
-          'invalid-argument',
-          parsedResponse.error ||
-            'The provided text does not appear to be a job description'
-        );
-      }
+        if (parsedResponse.isJobDescription === false) {
+          throw new HttpsError(
+            'invalid-argument',
+            parsedResponse.error ||
+              'The provided text does not appear to be a job description'
+          );
+        }
 
-      return parsedResponse;
+        return parsedResponse;
+      };
+
+      const result = await executeJobAnalysisTransaction(
+        prompt,
+        model,
+        processResponse
+      );
+
+      return result;
     } catch (error) {
-      logger.error('Error calling Gemini API:', error);
+      logger.error('Error in analyzeJobDescription:', error);
 
-      // If it's already an HttpsError, re-throw it
       if (error instanceof HttpsError) {
         throw error;
       }
 
-      // Otherwise, wrap it in a proper HttpsError
+      if (error instanceof Error && error.message.includes('token limit')) {
+        throw new HttpsError('resource-exhausted', error.message);
+      }
+
       throw new HttpsError('internal', 'Failed to process AI request', {
         originalError: error instanceof Error ? error.message : String(error),
       });
     }
   }
 );
+
+export const getTokenUsage = onCall(async () => {
+  try {
+    const stats = await getTokenUsageStats();
+
+    return stats;
+  } catch (error) {
+    logger.error('Error getting token usage stats:', error);
+    throw new HttpsError('internal', 'Failed to get token usage statistics', {
+      originalError: error instanceof Error ? error.message : String(error),
+    });
+  }
+});
+
+export const resetTokens = onCall(async request => {
+  try {
+    if (request.auth) {
+      logger.info(`Token reset requested by user: ${request.auth.uid}`);
+    } else {
+      logger.info('Token reset requested (unauthenticated)');
+    }
+
+    await resetTokenUsage();
+    const newStats = await getTokenUsageStats();
+
+    return {
+      success: true,
+      message: 'Token usage reset to 0',
+      newStats,
+    };
+  } catch (error) {
+    logger.error('Error resetting token usage:', error);
+    throw new HttpsError('internal', 'Failed to reset token usage', {
+      originalError: error instanceof Error ? error.message : String(error),
+    });
+  }
+});
