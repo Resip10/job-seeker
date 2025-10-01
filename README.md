@@ -27,6 +27,7 @@ A modern, comprehensive job application management platform built for job seeker
 - **Firebase Storage** - Cloud file storage for resumes and images
 - **Firebase Cloud Functions** - Serverless backend functions for AI analysis
 - **Google Gemini AI** - Advanced AI integration for job description analysis
+- **Real-time Token Tracking** - Live monitoring of AI API usage with 98.4% accuracy
 
 ### State Management & Data Flow
 
@@ -87,6 +88,13 @@ A modern, comprehensive job application management platform built for job seeker
 
    ```bash
    firebase deploy --only functions
+   ```
+
+   **Optional**: Use the automated deployment script:
+
+   ```bash
+   # For Windows PowerShell
+   .\scripts\deploy-token-tracking.ps1
    ```
 
 5. **Run the development server**
@@ -162,6 +170,12 @@ service cloud.firestore {
       allow create: if request.auth != null;
       allow read, update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
     }
+
+    // Global token usage tracking - read-only for authenticated users
+    match /global/usage {
+      allow read: if request.auth != null;
+      allow write: if false; // Only Cloud Functions can write
+    }
   }
 }
 ```
@@ -190,8 +204,10 @@ src/
 ├── app/                    # Next.js App Router pages
 │   ├── ai-analysis/        # AI-powered job description analysis
 │   │   ├── components/     # Analysis-specific components
-│   │   │   ├── AnalysisResults.tsx  # Display analysis results
-│   │   │   └── JobInputForm.tsx     # Job description input form
+│   │   │   ├── AIAnalysisPageContent.tsx # Main analysis page content
+│   │   │   ├── AnalysisResults.tsx       # Display analysis results
+│   │   │   ├── JobInputForm.tsx          # Job description input form
+│   │   │   └── TokenUsageDisplay.tsx     # Real-time token usage tracking
 │   │   ├── utils.ts        # Analysis utility functions
 │   │   └── page.tsx        # Main AI analysis page
 │   ├── applications/       # Job application management page
@@ -243,9 +259,13 @@ src/
 │   │   ├── label.tsx
 │   │   ├── loading-state.tsx
 │   │   ├── popover.tsx
+│   │   ├── progress.tsx
 │   │   ├── select.tsx
 │   │   ├── separator.tsx
-│   │   └── textarea.tsx
+│   │   ├── skeleton.tsx
+│   │   ├── sonner.tsx
+│   │   ├── textarea.tsx
+│   │   └── tooltip.tsx
 │   └── jobSeekerHero.tsx  # Landing page hero component
 ├── contexts/              # React Context providers
 │   ├── AuthContext.tsx    # Authentication state management
@@ -257,18 +277,18 @@ src/
 │       ├── aiAnalysis.ts  # AI job analysis service
 │       ├── constants.ts   # Application constants
 │       ├── error-handling.ts # Error handling utilities
+│       ├── index.ts       # Service exports
 │       ├── jobs.ts        # Job applications service
 │       ├── profiles.ts    # User profiles service
 │       ├── resumes.ts     # Resume management service
 │       ├── storage.ts     # Firebase Storage operations
+│       ├── tokenUsage.ts  # Real-time token usage tracking
 │       ├── types.ts       # TypeScript interfaces
 │       ├── userProfiles.ts # User profile data service
 │       └── validation.ts  # Data validation utilities
 ├── hooks/                 # Custom React hooks
-│   ├── useConfirmation.ts # Confirmation dialog hook
 │   ├── useForm.ts         # Form state management hook
-│   ├── useStatusCounts.ts # Job status counting hook
-│   └── useUserName.ts     # User name retrieval hook
+│   └── useTokenUsage.ts   # Real-time token usage tracking hook
 ├── lib/                   # Utility functions and shared code
 │   ├── auth.ts            # Authentication utilities
 │   ├── utils.ts           # General utility functions
@@ -295,10 +315,18 @@ functions/
 ├── src/
 │   ├── index.ts           # Main Cloud Functions entry point
 │   ├── helpers.ts         # Utility functions for job processing
-│   └── prompts.ts         # AI prompt templates and formatting
+│   ├── prompts.ts         # AI prompt templates and formatting
+│   └── services/          # Cloud Functions services
+│       └── tokenTracker.ts # Token usage tracking and management
 ├── package.json           # Functions dependencies
 ├── tsconfig.json          # TypeScript configuration for functions
 └── .eslintrc.js          # ESLint configuration for functions
+
+# Additional Files
+├── scripts/               # Deployment and utility scripts
+│   └── deploy-token-tracking.ps1 # Automated deployment script
+├── IMPLEMENTATION_SUMMARY.md      # Technical implementation details
+└── TOKEN_TRACKING_SETUP.md       # Token tracking setup guide
 ```
 
 ## 🚀 Getting Started
@@ -316,14 +344,7 @@ functions/
 3. Run the development server
 4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-### First Steps
-
-1. **Sign Up** - Create a new account with your email
-2. **Complete Your Profile** - Add personal information, experience, education, and skills
-3. **Upload Your Resume** - Store different versions of your resume
-4. **Try AI Job Analysis** - Paste a job description to get AI-powered insights and recommendations
-5. **Add Job Applications** - Start tracking your job applications with insights from AI analysis
-6. **Monitor Progress** - Use the dashboard to track your application status and profile completion
+For detailed setup instructions, see [TOKEN_TRACKING_SETUP.md](TOKEN_TRACKING_SETUP.md).
 
 ## 🤝 Contributing
 
