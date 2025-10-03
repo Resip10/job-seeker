@@ -1,10 +1,4 @@
 // Firebase AI Analysis Service
-import { getFunctions, httpsCallable } from 'firebase/functions';
-import app from '../config';
-
-interface JobAnalysisRequest {
-  text: string;
-}
 
 export interface JobAnalysisResponse {
   isJobDescription: boolean;
@@ -19,70 +13,45 @@ export interface JobAnalysisResponse {
 }
 
 /**
- * Call the Firebase Callable Function for job analysis
- * This automatically handles CORS and authentication
+ * Call the Firebase HTTP Function for job analysis
+ * Uses direct HTTP request to avoid CORS issues with callable functions
  */
 export const analyzeJobDescription = async (
   jobDescription: string
 ): Promise<JobAnalysisResponse> => {
   try {
-    const functions = getFunctions(app);
-    if (
-      process.env.NODE_ENV === 'development' &&
-      !process.env.NEXT_PUBLIC_USE_PRODUCTION_FUNCTIONS
-    ) {
-      try {
-        const { connectFunctionsEmulator } = await import('firebase/functions');
-        connectFunctionsEmulator(functions, 'localhost', 5001);
-        if (process.env.NODE_ENV === 'development') {
-          console.log('🔧 Using Firebase Functions emulator');
-        }
-      } catch {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('🔧 Emulator connection failed, using production');
-        }
-      }
-    } else if (process.env.NEXT_PUBLIC_USE_PRODUCTION_FUNCTIONS) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🔧 Using production Firebase Functions');
-      }
-    }
+    // Use HTTP function instead of callable function to avoid CORS issues
+    const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+    const functionUrl = `https://us-central1-${projectId}.cloudfunctions.net/analyzeJobDescriptionHttp`;
 
-    const analyzeJob = httpsCallable<JobAnalysisRequest, JobAnalysisResponse>(
-      functions,
-      'analyzeJobDescription'
-    );
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🔧 Callable function reference created');
-    }
+    console.log('🔧 Calling HTTP function:', functionUrl);
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🔧 About to call callable function...');
-    }
-    const result = await analyzeJob({ text: jobDescription });
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🔧 Function call successful:', result);
-    }
+    const response = await fetch(functionUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ text: jobDescription }),
+    });
 
-    return result.data;
-  } catch (error: unknown) {
-    console.error('Firebase callable function error:', error);
-    if (error instanceof Error) {
-      console.error('Error stack:', error.stack);
-    }
-
-    if (
-      error &&
-      typeof error === 'object' &&
-      'code' in error &&
-      'message' in error
-    ) {
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
       throw new Error(
-        `Firebase function error (${error.code}): ${error.message}`
+        errorData.error || `HTTP error! status: ${response.status}`
       );
     }
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Failed to analyze job description: ${errorMessage}`);
+
+    const result = await response.json();
+    console.log('🔧 HTTP function call successful:', result);
+
+    return result;
+  } catch (error: unknown) {
+    console.error('HTTP function error:', error);
+
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to analyze job description'
+    );
   }
 };

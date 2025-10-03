@@ -1,0 +1,12 @@
+# Ignore Firebase Functions directory
+functions/
+
+# Ignore Firebase config files
+firebase.json
+firestore.rules
+firestore.indexes.json
+storage.rules
+firebase-debug.log
+
+# Ignore deployment scripts
+scripts/
