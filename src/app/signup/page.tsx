@@ -28,6 +28,7 @@ import { JobSeekerHero } from '@/components/jobSeekerHero';
 import { signUpWithEmail, type SignupData } from '@/lib/auth';
 import { showToast } from '@/lib/toast';
 import { PublicLayout } from '@/components/layouts/PublicLayout';
+import { APP_VERSION } from '@/lib/constants/version';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -331,6 +332,13 @@ export default function SignupPage() {
                     >
                       Sign in here
                     </Link>
+                  </p>
+                </div>
+
+                {/* Version */}
+                <div className='text-center pt-2 border-t border-slate-100'>
+                  <p className='text-xs text-slate-400'>
+                    Version {APP_VERSION}
                   </p>
                 </div>
               </CardContent>

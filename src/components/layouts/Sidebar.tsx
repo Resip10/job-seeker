@@ -17,6 +17,7 @@ import {
   Brain,
 } from 'lucide-react';
 import { signOutUser } from '@/lib/auth';
+import { APP_VERSION } from '@/lib/constants/version';
 
 interface SidebarProps {
   className?: string;
@@ -191,7 +192,12 @@ export function Sidebar({ className }: SidebarProps) {
       </nav>
 
       {/* Footer */}
-      <div className='p-4 border-t border-slate-200'>
+      <div className='p-4 border-t border-slate-200 space-y-3'>
+        {!isCollapsed && (
+          <div className='px-3 text-xs text-slate-400'>
+            Version {APP_VERSION}
+          </div>
+        )}
         <Button
           variant='ghost'
           onClick={handleLogout}
