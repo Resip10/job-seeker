@@ -203,130 +203,38 @@ service firebase.storage {
 src/
 ├── app/                    # Next.js App Router pages
 │   ├── ai-analysis/        # AI-powered job description analysis
-│   │   ├── components/     # Analysis-specific components
-│   │   │   ├── AIAnalysisPageContent.tsx # Main analysis page content
-│   │   │   ├── AnalysisResults.tsx       # Display analysis results
-│   │   │   ├── JobInputForm.tsx          # Job description input form
-│   │   │   └── TokenUsageDisplay.tsx     # Real-time token usage tracking
-│   │   ├── utils.ts        # Analysis utility functions
-│   │   └── page.tsx        # Main AI analysis page
-│   ├── applications/       # Job application management page
+│   │   └── components/     # Analysis-specific components
+│   ├── applications/       # Job application management
+│   │   └── components/     # Application-specific components
 │   ├── dashboard/          # Main dashboard with overview
-│   ├── login/             # User authentication
-│   ├── profile/           # Complete profile management
-│   ├── signup/            # User registration
-│   ├── layout.tsx         # Root layout with providers
-│   └── page.tsx           # Landing page
-├── components/            # Reusable UI components
-│   ├── dashboard/         # Dashboard-specific components
-│   │   ├── OverviewSection.tsx      # Stats and quick actions
-│   │   ├── ProfileCompletionCard.tsx # Profile progress tracking
-│   │   ├── SummaryCard.tsx          # Application statistics
-│   │   └── StatusItem.tsx           # Status indicators
-│   ├── jobs/              # Job management components
-│   │   ├── JobCard.tsx    # Individual job application card
-│   │   ├── JobForm.tsx    # Add/edit job application form
-│   │   └── JobList.tsx    # Job applications list with filtering
-│   ├── profile/           # Profile management components
-│   │   ├── EducationSection.tsx     # Education management
-│   │   ├── ExperienceSection.tsx    # Work experience management
-│   │   ├── ProfileHeader.tsx        # Personal information
-│   │   ├── ProfileLinksSection.tsx  # Additional profile links
-│   │   ├── ProfilePageContent.tsx   # Main profile page layout
-│   │   ├── ResumeSection.tsx        # Resume management
-│   │   ├── SkillsSection.tsx        # Skills management
-│   │   └── SocialLinksSection.tsx   # Social media links
-│   ├── layouts/           # Layout components
-│   │   ├── AppLayout.tsx  # Main application layout with sidebar
-│   │   ├── PrivateLayout.tsx        # Authenticated user layout
-│   │   ├── PublicLayout.tsx         # Public pages layout
-│   │   └── Sidebar.tsx              # Navigation sidebar
-│   ├── icons/             # Custom icon components
-│   │   ├── GitHubIcon.tsx
-│   │   ├── LinkedInIcon.tsx
-│   │   └── XIcon.tsx
-│   ├── ui/                # Base UI components (shadcn/ui)
-│   │   ├── alert.tsx
-│   │   ├── badge.tsx
-│   │   ├── button.tsx
-│   │   ├── calendar.tsx
-│   │   ├── card.tsx
-│   │   ├── card-actions.tsx
-│   │   ├── checkbox.tsx
-│   │   ├── empty-state.tsx
-│   │   ├── form-field.tsx
-│   │   ├── input.tsx
-│   │   ├── label.tsx
-│   │   ├── loading-state.tsx
-│   │   ├── popover.tsx
-│   │   ├── progress.tsx
-│   │   ├── select.tsx
-│   │   ├── separator.tsx
-│   │   ├── skeleton.tsx
-│   │   ├── sonner.tsx
-│   │   ├── textarea.tsx
-│   │   └── tooltip.tsx
-│   └── jobSeekerHero.tsx  # Landing page hero component
-├── contexts/              # React Context providers
-│   ├── AuthContext.tsx    # Authentication state management
-│   ├── JobsContext.tsx    # Job applications state management
-│   └── ProfileContext.tsx # Profiles and resumes state management
-├── firebase/              # Firebase configuration and services
-│   ├── config.ts          # Firebase app configuration
-│   └── services/          # Firebase service layer
-│       ├── aiAnalysis.ts  # AI job analysis service
-│       ├── constants.ts   # Application constants
-│       ├── error-handling.ts # Error handling utilities
-│       ├── index.ts       # Service exports
-│       ├── jobs.ts        # Job applications service
-│       ├── profiles.ts    # User profiles service
-│       ├── resumes.ts     # Resume management service
-│       ├── storage.ts     # Firebase Storage operations
-│       ├── tokenUsage.ts  # Real-time token usage tracking
-│       ├── types.ts       # TypeScript interfaces
-│       ├── userProfiles.ts # User profile data service
-│       └── validation.ts  # Data validation utilities
-├── hooks/                 # Custom React hooks
-│   ├── useForm.ts         # Form state management hook
-│   └── useTokenUsage.ts   # Real-time token usage tracking hook
-├── lib/                   # Utility functions and shared code
-│   ├── auth.ts            # Authentication utilities
-│   ├── utils.ts           # General utility functions
-│   └── utils/             # Specialized utility modules
-│       ├── date.ts        # Date formatting utilities
-│       ├── error-handling.ts # Error handling utilities
-│       ├── form.ts        # Form validation utilities
-│       └── validation.ts  # Data validation utilities
-└── types/                 # Global TypeScript type definitions
+│   │   └── components/     # Dashboard-specific components
+│   │       └── hooks/      # Dashboard-specific hooks
+│   ├── login/              # User authentication
+│   ├── profile/            # Complete profile management
+│   │   └── components/     # Profile-specific components
+│   └── signup/             # User registration
+├── components/             # Reusable UI components
+│   ├── application-status/ # Application status components
+│   │   └── hooks/          # Status-related hooks
+│   ├── icons/              # Custom icon components
+│   ├── layouts/            # Layout components
+│   └── ui/                 # Base UI components (shadcn/ui)
+├── contexts/               # React Context providers
+├── firebase/               # Firebase configuration and services
+│   └── services/           # Firebase service layer
+├── hooks/                  # Custom React hooks
+├── lib/                    # Utility functions and shared code
+│   ├── constants/          # Application constants
+│   ├── types/              # Type definitions
+│   └── utils/              # Specialized utility modules
+└── types/                  # Global TypeScript type definitions
 
-# Configuration Files
-├── .prettierrc           # Prettier code formatting configuration
-├── .prettierignore       # Files to ignore for Prettier formatting
-├── .lintstagedrc.json    # lint-staged configuration for pre-commit hooks
-├── .husky/               # Git hooks directory
-│   └── pre-commit        # Pre-commit hook for code quality checks
-├── eslint.config.mjs     # ESLint configuration with strict rules
-├── tailwind.config.ts    # Tailwind CSS configuration
-├── tsconfig.json         # TypeScript configuration
-└── package.json          # Dependencies and scripts
-
-# Firebase Cloud Functions
-functions/
+functions/                  # Firebase Cloud Functions
 ├── src/
-│   ├── index.ts           # Main Cloud Functions entry point
-│   ├── helpers.ts         # Utility functions for job processing
-│   ├── prompts.ts         # AI prompt templates and formatting
-│   └── services/          # Cloud Functions services
-│       └── tokenTracker.ts # Token usage tracking and management
-├── package.json           # Functions dependencies
-├── tsconfig.json          # TypeScript configuration for functions
-└── .eslintrc.js          # ESLint configuration for functions
+│   └── services/           # Cloud Functions services
+└── lib/                    # Compiled JavaScript output
 
-# Additional Files
-├── scripts/               # Deployment and utility scripts
-│   └── deploy-token-tracking.ps1 # Automated deployment script
-├── IMPLEMENTATION_SUMMARY.md      # Technical implementation details
-└── TOKEN_TRACKING_SETUP.md       # Token tracking setup guide
+scripts/                    # Deployment and utility scripts
 ```
 
 ## 🚀 Getting Started
