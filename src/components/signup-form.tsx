@@ -18,6 +18,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { AlertCircle } from 'lucide-react';
 import { signUpWithEmail, type SignupData } from '@/lib/auth';
 import { showToast } from '@/lib/toast';
+import { Logo } from '@/components/icons/Logo';
 
 export function SignupForm() {
   const router = useRouter();
@@ -83,8 +84,14 @@ export function SignupForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className='text-2xl'>Sign Up</CardTitle>
-        <CardDescription>Create your account to get started</CardDescription>
+        <div className='flex flex-col items-center mb-2'>
+          <Logo size={48} className='text-primary mb-3' />
+          <h1 className='text-3xl font-bold text-slate-900 mb-1'>Applyo</h1>
+        </div>
+        <CardTitle className='text-xl text-center'>Sign Up</CardTitle>
+        <CardDescription className='text-center'>
+          Start your journey to success today.
+        </CardDescription>
       </CardHeader>
       <CardContent>
         {error && (

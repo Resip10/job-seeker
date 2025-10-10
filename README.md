@@ -1,6 +1,8 @@
-# Job Seeker Platform
+# Applyo
 
-A modern, comprehensive job application management platform built for job seekers to track applications, manage professional profiles, and organize their career journey with an intuitive, responsive interface.
+## Streamline your journey to success.
+
+A modern, comprehensive job application management platform that streamlines your job search. Track applications, manage professional profiles, and organize your career journey with an intuitive, responsive interface.
 
 ## 🛠️ Technologies Used
 
@@ -50,7 +52,7 @@ A modern, comprehensive job application management platform built for job seeker
 
    ```bash
    git clone <repository-url>
-   cd job-seeker
+   cd applyo
    ```
 
 2. **Install dependencies**
@@ -265,9 +267,3 @@ For detailed setup instructions, see [TOKEN_TRACKING_SETUP.md](TOKEN_TRACKING_SE
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-**Built with ❤️ for job seekers everywhere!**
-
-This comprehensive platform helps you stay organized, track your progress, and land your dream job. Perfect for managing your entire job search process from application to offer.

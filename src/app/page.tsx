@@ -1,7 +1,7 @@
 'use client';
 
 // TODO: Create a proper landing page instead of redirecting to login
-// The landing page should showcase the job seeker app features and benefits
+// The landing page should showcase Applyo features and benefits
 // Include hero section, features, testimonials, and call-to-action buttons
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';

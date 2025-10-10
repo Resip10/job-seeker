@@ -17,6 +17,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 import { signInWithEmail, type LoginData } from '@/lib/auth';
 import { showToast } from '@/lib/toast';
+import { Logo } from '@/components/icons/Logo';
 
 export function LoginForm() {
   const router = useRouter();
@@ -54,9 +55,13 @@ export function LoginForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className='text-2xl'>Login</CardTitle>
-        <CardDescription>
-          Enter your email below to login to your account
+        <div className='flex flex-col items-center mb-2'>
+          <Logo size={48} className='text-primary mb-3' />
+          <h1 className='text-3xl font-bold text-slate-900 mb-1'>Applyo</h1>
+        </div>
+        <CardTitle className='text-xl text-center'>Login</CardTitle>
+        <CardDescription className='text-center'>
+          Welcome back! Continue your journey to success.
         </CardDescription>
       </CardHeader>
       <CardContent>

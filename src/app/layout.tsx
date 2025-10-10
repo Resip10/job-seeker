@@ -11,8 +11,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Job seeker',
-  description: 'Find Your Dream Job',
+  title: 'Applyo',
+  description: 'Streamline your journey to success.',
 };
 
 export default function RootLayout({

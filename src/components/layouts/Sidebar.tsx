@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { signOutUser } from '@/lib/auth';
 import { APP_VERSION } from '@/lib/constants/version';
+import { Logo } from '@/components/icons/Logo';
 
 interface SidebarProps {
   className?: string;
@@ -91,10 +92,8 @@ export function Sidebar({ className }: SidebarProps) {
       <div className='flex items-center justify-between p-4 border-b border-slate-200'>
         {!isCollapsed && (
           <div className='flex items-center space-x-3'>
-            <div className='inline-flex items-center justify-center w-8 h-8 bg-slate-900 rounded-lg'>
-              <Briefcase className='w-5 h-5 text-white' />
-            </div>
-            <h1 className='text-lg font-bold text-slate-900'>Job Seeker</h1>
+            <Logo size={32} className='text-slate-900' />
+            <h1 className='text-lg font-bold text-slate-900'>Applyo</h1>
           </div>
         )}
         <Button
