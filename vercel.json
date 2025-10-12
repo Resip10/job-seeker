@@ -1,0 +1,3 @@
+{
+  "ignoreCommand": "node .config/vercel-version-check.js"
+}
