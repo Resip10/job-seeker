@@ -180,7 +180,7 @@ export function SignupForm() {
         </form>
         <div className='mt-4 text-center text-sm'>
           Already have an account?{' '}
-          <Link href='/login' className='underline'>
+          <Link href='/login' className='underline cursor-pointer'>
             Login
           </Link>
         </div>

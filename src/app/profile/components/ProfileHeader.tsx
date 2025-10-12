@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { User } from 'firebase/auth';
 import { UserProfileDoc } from '@/firebase/services/types';
 import { useProfile } from '@/contexts/ProfileContext';
@@ -17,14 +17,9 @@ import {
   MapPin,
   Phone,
   Mail,
-  Upload,
-  Trash2,
   AlertCircle,
 } from 'lucide-react';
-import {
-  uploadFile,
-  generateProfileImagePath,
-} from '@/firebase/services/storage';
+import { ProfileImageUpload } from '@/components/profile/ProfileImageUpload';
 
 interface ProfileHeaderProps {
   userProfile: UserProfileDoc | null;
@@ -36,9 +31,6 @@ export function ProfileHeader({ userProfile, user }: ProfileHeaderProps) {
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     firstName: userProfile?.firstName || user?.displayName?.split(' ')[0] || '',
     lastName: userProfile?.lastName || user?.displayName?.split(' ')[1] || '',
@@ -52,23 +44,11 @@ export function ProfileHeader({ userProfile, user }: ProfileHeaderProps) {
     setUploadingImage(true);
     setError(null);
     try {
-      const finalFormData = { ...formData };
-
-      // Upload image if a new file was selected
-      if (selectedFile) {
-        const filePath = generateProfileImagePath(
-          user?.uid || '',
-          selectedFile.name
-        );
-        const imageUrl = await uploadFile(selectedFile, filePath);
-        finalFormData.profileImageUrl = imageUrl;
-      }
-
       if (userProfile) {
-        await updateUserProfileById(userProfile.id, finalFormData);
+        await updateUserProfileById(userProfile.id, formData);
       } else {
         await addUserProfile({
-          ...finalFormData,
+          ...formData,
           email: user?.email || '',
           skills: [],
           experience: [],
@@ -76,9 +56,6 @@ export function ProfileHeader({ userProfile, user }: ProfileHeaderProps) {
         });
       }
 
-      // Clear the selected file and preview
-      setSelectedFile(null);
-      setPreviewUrl(null);
       setIsEditingProfile(false);
     } catch (error) {
       console.error('Failed to save profile:', error);
@@ -102,68 +79,8 @@ export function ProfileHeader({ userProfile, user }: ProfileHeaderProps) {
       phone: userProfile?.phone || '',
       profileImageUrl: userProfile?.profileImageUrl || '',
     });
-    setSelectedFile(null);
-    setPreviewUrl(null);
     setIsEditingProfile(false);
   };
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) {
-      return;
-    }
-
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      alert('Please select an image file (JPG, PNG, or GIF)');
-
-      return;
-    }
-
-    // Validate file size (5MB limit)
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Image size must be less than 5MB');
-
-      return;
-    }
-
-    // Store the selected file and create preview
-    setSelectedFile(file);
-
-    // Create preview URL
-    const preview = URL.createObjectURL(file);
-    setPreviewUrl(preview);
-
-    // Clear the file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
-  const handleRemoveImage = () => {
-    // Clear selected file and preview
-    setSelectedFile(null);
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
-      setPreviewUrl(null);
-    }
-
-    // Clear the current profile image URL
-    setFormData(prev => ({ ...prev, profileImageUrl: '' }));
-  };
-
-  const triggerImageUpload = () => {
-    fileInputRef.current?.click();
-  };
-
-  // Cleanup preview URL on unmount
-  useEffect(() => {
-    return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
-    };
-  }, [previewUrl]);
 
   const displayName = userProfile
     ? `${userProfile.firstName} ${userProfile.lastName}`.trim()
@@ -198,7 +115,6 @@ export function ProfileHeader({ userProfile, user }: ProfileHeaderProps) {
         </div>
       </CardHeader>
       <CardContent>
-        {/* Error Display */}
         {error && (
           <Alert variant='destructive' className='mb-4'>
             <AlertCircle className='h-4 w-4' />
@@ -215,73 +131,12 @@ export function ProfileHeader({ userProfile, user }: ProfileHeaderProps) {
 
         {isEditingProfile ? (
           <div className='space-y-4'>
-            {/* Profile Image Upload */}
-            <div className='flex items-center gap-4'>
-              <div className='relative'>
-                <div className='w-20 h-20 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden'>
-                  {previewUrl ? (
-                    <img
-                      src={previewUrl}
-                      alt='Profile Preview'
-                      className='w-full h-full rounded-full object-cover'
-                    />
-                  ) : formData.profileImageUrl ? (
-                    <img
-                      src={formData.profileImageUrl}
-                      alt='Profile'
-                      className='w-full h-full rounded-full object-cover'
-                    />
-                  ) : (
-                    <UserIcon className='w-10 h-10 text-slate-400' />
-                  )}
-                </div>
-                {uploadingImage && (
-                  <div className='absolute inset-0 rounded-full bg-black bg-opacity-50 flex items-center justify-center'>
-                    <div className='animate-spin rounded-full h-6 w-6 border-b-2 border-white'></div>
-                  </div>
-                )}
-              </div>
-              <div className='flex flex-col gap-2'>
-                <div className='flex gap-2'>
-                  <Button
-                    type='button'
-                    variant='outline'
-                    size='sm'
-                    onClick={triggerImageUpload}
-                    disabled={uploadingImage}
-                    className='cursor-pointer'
-                  >
-                    <Upload className='w-4 h-4 mr-2' />
-                    {previewUrl || formData.profileImageUrl
-                      ? 'Change Photo'
-                      : 'Select Photo'}
-                  </Button>
-                  {(previewUrl || formData.profileImageUrl) && (
-                    <Button
-                      type='button'
-                      variant='outline'
-                      size='sm'
-                      onClick={handleRemoveImage}
-                      disabled={uploadingImage}
-                      className='text-red-600 hover:text-red-700 cursor-pointer'
-                    >
-                      <Trash2 className='w-4 h-4 mr-2' />
-                      Remove
-                    </Button>
-                  )}
-                </div>
-                <p className='text-xs text-text-light'>
-                  JPG, PNG or GIF. Max size 5MB.
-                </p>
-              </div>
-            </div>
-
-            <input
-              ref={fileInputRef}
-              type='file'
-              accept='image/*'
-              onChange={handleImageUpload}
-              className='hidden'
+            <ProfileImageUpload
+              currentImageUrl={formData.profileImageUrl}
+              onImageChange={url =>
+                setFormData(prev => ({ ...prev, profileImageUrl: url }))
+              }
+              isUploading={uploadingImage}
             />
 
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>

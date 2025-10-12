@@ -54,7 +54,6 @@ export function ProfileCompletionCard({
                 </div>
               </div>
 
-              {/* Progress Bar */}
               <div className='w-full bg-gray-200 rounded-full h-1.5 mb-2'>
                 <div
                   className='bg-gradient-to-r from-blue-500 to-indigo-500 h-1.5 rounded-full transition-all duration-500'

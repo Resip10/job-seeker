@@ -88,7 +88,7 @@ export function JobForm({
             variant='ghost'
             size='sm'
             onClick={onCancel}
-            className='h-8 w-8 p-0'
+            className='h-8 w-8 p-0 cursor-pointer'
           >
             <X className='w-4 h-4' />
           </Button>
@@ -160,7 +160,11 @@ export function JobForm({
           />
 
           <div className='flex gap-3 pt-4'>
-            <Button type='submit' disabled={isLoading} className='flex-1'>
+            <Button
+              type='submit'
+              disabled={isLoading}
+              className='flex-1 cursor-pointer'
+            >
               {isLoading ? 'Saving...' : job ? 'Update Job' : 'Add Job'}
             </Button>
             <Button
@@ -168,6 +172,7 @@ export function JobForm({
               variant='outline'
               onClick={onCancel}
               disabled={isLoading}
+              className='cursor-pointer'
             >
               Cancel
             </Button>

@@ -9,18 +9,10 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import {
-  Edit,
-  Trash2,
-  ExternalLink,
-  Calendar,
-  Building2,
-  FileText,
-} from 'lucide-react';
-import { Tooltip, TooltipTrigger } from '@/components/ui/tooltip';
-import * as TooltipPrimitive from '@radix-ui/react-tooltip';
+import { Edit, Trash2, ExternalLink, Calendar, Building2 } from 'lucide-react';
 import { IJobDoc } from '@/firebase/services/types';
 import { formatDate } from '@/lib/utils/date';
+import { JobNotesTooltip } from '@/components/applications/JobNotesTooltip';
 
 interface JobCardProps {
   job: IJobDoc;
@@ -95,26 +87,7 @@ export function JobCard({
                 <CardTitle className='text-lg font-semibold text-text-dark leading-tight line-clamp-2 h-12 flex-1'>
                   {job.title}
                 </CardTitle>
-                {/* Notes Icon with Tooltip */}
-                {job.notes && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className='flex items-center justify-center w-5 h-5 rounded-full bg-blue-50 hover:bg-blue-100 transition-colors cursor-help mt-0.5 flex-shrink-0'>
-                        <FileText className='w-3 h-3 text-blue-600' />
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipPrimitive.Portal>
-                      <TooltipPrimitive.Content
-                        side='top'
-                        className='max-w-xs bg-white text-gray-900 border border-gray-200 shadow-lg z-50 rounded-md px-3 py-2 text-xs animate-in fade-in-0 zoom-in-95'
-                        sideOffset={5}
-                      >
-                        <p className='leading-relaxed'>{job.notes}</p>
-                        <TooltipPrimitive.Arrow className='bg-white fill-white border-l border-t border-gray-200 z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45' />
-                      </TooltipPrimitive.Content>
-                    </TooltipPrimitive.Portal>
-                  </Tooltip>
-                )}
+                <JobNotesTooltip notes={job.notes} />
               </div>
               <CardDescription className='flex items-center gap-1'>
                 <Building2 className='w-4 h-4 text-text-light flex-shrink-0' />
@@ -162,7 +135,6 @@ export function JobCard({
           </div>
         </div>
 
-        {/* Actions - Always at bottom */}
         <div className='flex gap-2 pt-4 mt-auto border-t border-border'>
           <Button
             variant='outline'

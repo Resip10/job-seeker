@@ -4,6 +4,12 @@
 
 A modern, comprehensive job application management platform that streamlines your job search. Track applications, manage professional profiles, and organize your career journey with an intuitive, responsive interface.
 
+## 🚀 Live Demo
+
+**[View Live Application](https://job-seeker-topaz.vercel.app/)**
+
+Experience the full application deployed on Vercel with Firebase backend integration.
+
 ## 🛠️ Technologies Used
 
 ### Frontend
@@ -18,7 +24,7 @@ A modern, comprehensive job application management platform that streamlines you
 - **shadcn/ui** - Beautifully designed, accessible components
 - **Radix UI** - Unstyled, accessible UI primitives
 - **Lucide React** - Consistent, beautiful icon library
-- **Framer Motion** - Smooth animations and transitions
+- **Tailwind CSS Animations** - Smooth CSS-based transitions
 - **Class Variance Authority** - Type-safe component variants
 
 ### Backend & Database
@@ -218,8 +224,11 @@ src/
 ├── components/             # Reusable UI components
 │   ├── application-status/ # Application status components
 │   │   └── hooks/          # Status-related hooks
+│   ├── applications/       # Reusable application components
+│   ├── auth/               # Authentication components
 │   ├── icons/              # Custom icon components
 │   ├── layouts/            # Layout components
+│   ├── profile/            # Reusable profile components
 │   └── ui/                 # Base UI components (shadcn/ui)
 ├── contexts/               # React Context providers
 ├── firebase/               # Firebase configuration and services
