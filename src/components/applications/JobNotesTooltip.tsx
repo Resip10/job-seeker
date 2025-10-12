@@ -5,7 +5,7 @@ import { Tooltip, TooltipTrigger } from '@/components/ui/tooltip';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 
 interface JobNotesTooltipProps {
-  notes: string;
+  notes?: string;
 }
 
 export function JobNotesTooltip({ notes }: JobNotesTooltipProps) {
