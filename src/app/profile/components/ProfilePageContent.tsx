@@ -5,9 +5,13 @@ import { useProfile } from '@/contexts/ProfileContext';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, X } from 'lucide-react';
 import { ProfileHeader } from './ProfileHeader';
+import { ProfessionalInfoSection } from './ProfessionalInfoSection';
 import { ExperienceSection } from './ExperienceSection';
 import { EducationSection } from './EducationSection';
 import { SkillsSection } from './SkillsSection';
+import { LanguagesSection } from './LanguagesSection';
+import { CertificationsSection } from './CertificationsSection';
+import { JobPreferencesSection } from './JobPreferencesSection';
 import { SocialLinksSection } from './SocialLinksSection';
 import { ResumeSection } from './ResumeSection';
 import { ProfileLinksSection } from './ProfileLinksSection';
@@ -51,9 +55,13 @@ export function ProfilePageContent() {
 
         {!loading && (
           <div className='space-y-6 mt-6'>
+            <ProfessionalInfoSection userProfile={userProfile} />
             <SkillsSection userProfile={userProfile} />
+            <LanguagesSection userProfile={userProfile} />
             <ExperienceSection userProfile={userProfile} />
             <EducationSection userProfile={userProfile} />
+            <CertificationsSection userProfile={userProfile} />
+            <JobPreferencesSection userProfile={userProfile} />
             <SocialLinksSection userProfile={userProfile} />
             <ResumeSection userProfile={userProfile} />
             <ProfileLinksSection userProfile={userProfile} />
