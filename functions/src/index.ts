@@ -1,4 +1,5 @@
 import { onCall, onRequest, HttpsError } from 'firebase-functions/v2/https';
+import type { Response } from 'express';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { initializeApp } from 'firebase-admin/app';
 import { processJobInput } from './helpers';
@@ -18,7 +19,7 @@ setGlobalOptions({ maxInstances: 10 });
 const geminiApiKey = defineSecret('GEMINI_API_KEY');
 
 // CORS helper function
-const setCorsHeaders = (res: any, origin?: string) => {
+const setCorsHeaders = (res: Response, origin?: string) => {
   const requestOrigin = origin || '';
 
   // Allow localhost for development and any Vercel app for production

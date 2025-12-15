@@ -1,4 +1,8 @@
 import { Timestamp } from 'firebase/firestore';
+import type {
+  LanguageProficiency,
+  SalaryPeriod,
+} from '@/lib/constants/profile';
 
 // Simple types for MVP
 export interface User {
@@ -56,6 +60,14 @@ export interface UserProfile {
   skills: string[];
   experience: WorkExperience[];
   education: Education[];
+  headline?: string;
+  yearsOfExperience?: number;
+  languages?: Language[];
+  workAuthorization?: string;
+  certifications?: Certification[];
+  availabilityStatus?: string;
+  noticePeriod?: string;
+  jobPreferences?: JobPreferences;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
@@ -84,6 +96,38 @@ export interface Education {
   endDate?: string;
   current: boolean;
   description?: string;
+}
+
+export interface Language {
+  id: string;
+  name: string;
+  proficiency: LanguageProficiency;
+}
+
+export interface Certification {
+  id: string;
+  name: string;
+  issuingOrganization: string;
+  issueDate: string;
+  expirationDate?: string;
+  credentialId?: string;
+  credentialUrl?: string;
+}
+
+export interface SalaryExpectation {
+  min?: number;
+  max?: number;
+  currency: string;
+  period: SalaryPeriod;
+}
+
+export interface JobPreferences {
+  workMode?: string[];
+  jobTypes?: string[];
+  desiredJobTitle?: string;
+  salaryExpectation?: SalaryExpectation;
+  willingToRelocate?: boolean;
+  preferredLocations?: string[];
 }
 
 // Profile links types (keeping existing for backward compatibility)

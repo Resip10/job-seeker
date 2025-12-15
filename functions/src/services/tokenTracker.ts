@@ -1,5 +1,6 @@
 import { getFirestore } from 'firebase-admin/firestore';
 import { logger } from 'firebase-functions/v2';
+import type { GenerativeModel } from '@google/generative-ai';
 
 const GLOBAL_DOC_ID = 'usage';
 const MAX_DAILY_TOKENS = 50000;
@@ -82,12 +83,11 @@ export async function getTokenUsageStats(): Promise<
   }
 }
 
-export async function executeJobAnalysisTransaction(
+export async function executeJobAnalysisTransaction<T>(
   prompt: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  model: any,
-  processResponse: (text: string) => any
-): Promise<any> {
+  model: GenerativeModel,
+  processResponse: (text: string) => T
+): Promise<T> {
   const db = getFirestore();
   const globalDocRef = db.collection('global').doc(GLOBAL_DOC_ID);
 
@@ -163,7 +163,7 @@ export async function executeJobAnalysisTransaction(
 
       actualTokens = calculatedTotal;
 
-      logger.info(`🎯 API call successful. Token breakdown:`, {
+      logger.info('🎯 API call successful. Token breakdown:', {
         promptTokens: promptTokensActual,
         candidatesTokens: candidatesTokensActual,
         calculatedTotal,
