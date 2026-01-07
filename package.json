@@ -17,9 +17,9 @@
     "emulator:all": "firebase emulators:start",
     "dev:full": "concurrently \"npm run dev\" \"npm run emulator\"",
     "dev:prod": "cross-env NEXT_PUBLIC_USE_PRODUCTION_FUNCTIONS=true npm run dev",
-    "release:patch": "npm version patch -m 'Release v%s'",
-    "release:minor": "npm version minor -m 'Release v%s'",
-    "release:major": "npm version major -m 'Release v%s'"
+    "release:patch": "npm version patch -m \"Release v%s\"",
+    "release:minor": "npm version minor -m \"Release v%s\"",
+    "release:major": "npm version major -m \"Release v%s\""
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.3.3",
