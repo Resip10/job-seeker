@@ -43,10 +43,6 @@ const eslintConfig = [
       'react/no-array-index-key': 'warn',
       'react/no-unescaped-entities': 'error',
 
-      // React Hooks rules
-      'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
-
       // General JavaScript/TypeScript rules
       'no-console': 'warn',
       'no-debugger': 'error',
