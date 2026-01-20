@@ -17,7 +17,7 @@ export class JobInputError extends Error {
 
 const isUrl = (text: string) => {
   try {
-    const url = new URL(text);
+    const url = new globalThis.URL(text);
     return url.protocol === 'http:' || url.protocol === 'https:';
   } catch {
     return false;
@@ -25,20 +25,22 @@ const isUrl = (text: string) => {
 };
 
 const fetchJobTextFromUrl = async (url: string): Promise<string> => {
-  const parsedUrl = new URL(url);
-  const requestUrls =
-    parsedUrl.hostname === 'r.jina.ai'
-      ? [parsedUrl.toString()]
-      : [
-          `https://r.jina.ai/${parsedUrl.host}${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`,
-          `https://r.jina.ai/${parsedUrl.toString()}`,
-        ];
+  const parsedUrl = new globalThis.URL(url);
+  let requestUrls: string[];
+  if (parsedUrl.hostname === 'r.jina.ai') {
+    requestUrls = [parsedUrl.toString()];
+  } else {
+    requestUrls = [
+      `https://r.jina.ai/${parsedUrl.host}${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`,
+      `https://r.jina.ai/${parsedUrl.toString()}`,
+    ];
+  }
 
   let lastError: unknown;
 
   for (const requestUrl of requestUrls) {
     try {
-      const response = await fetch(requestUrl, {
+      const response = await globalThis.fetch(requestUrl, {
         headers: {
           'X-Return-Format': 'text',
         },
@@ -55,8 +57,8 @@ const fetchJobTextFromUrl = async (url: string): Promise<string> => {
       }
 
       return text;
-    } catch (error) {
-      lastError = error;
+    } catch (caughtError) {
+      lastError = caughtError;
     }
   }
 
@@ -109,7 +111,7 @@ export async function processJobInput(input: string): Promise<string> {
 
     try {
       cleanedInput = await fetchJobTextFromUrl(initialInput);
-    } catch (error) {
+    } catch {
       throw new JobInputError(
         'Unable to read the website. Please paste the job description text instead.',
         'url-fetch-failed'
