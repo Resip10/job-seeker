@@ -2,7 +2,7 @@ import { onCall, onRequest, HttpsError } from 'firebase-functions/v2/https';
 import type { Response } from 'express';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { initializeApp } from 'firebase-admin/app';
-import { processJobInput } from './helpers';
+import { JobInputError, processJobInput } from './helpers';
 import { createJobAnalysisPrompt } from './prompts';
 import { defineSecret } from 'firebase-functions/params';
 import { setGlobalOptions } from 'firebase-functions/v2';
@@ -59,7 +59,7 @@ export const analyzeJobDescription = onCall(
     try {
       logger.info('Starting job analysis process');
 
-      const jobDescription = processJobInput(jobInput);
+      const jobDescription = await processJobInput(jobInput);
       const prompt = createJobAnalysisPrompt(jobDescription);
 
       const genAI = new GoogleGenerativeAI(geminiApiKey.value());
@@ -109,6 +109,10 @@ export const analyzeJobDescription = onCall(
 
       if (error instanceof HttpsError) {
         throw error;
+      }
+
+      if (error instanceof JobInputError) {
+        throw new HttpsError('invalid-argument', error.message);
       }
 
       if (error instanceof Error && error.message.includes('token limit')) {
@@ -201,7 +205,7 @@ export const analyzeJobDescriptionHttp = onRequest(
 
       logger.info('Starting job analysis process (HTTP)');
 
-      const jobDescription = processJobInput(text);
+      const jobDescription = await processJobInput(text);
       const prompt = createJobAnalysisPrompt(jobDescription);
 
       const genAI = new GoogleGenerativeAI(geminiApiKey.value());
@@ -245,6 +249,12 @@ export const analyzeJobDescriptionHttp = onRequest(
       res.status(200).json(result);
     } catch (error) {
       logger.error('Error in analyzeJobDescriptionHttp:', error);
+
+      if (error instanceof JobInputError) {
+        res.status(400).json({ error: error.message });
+
+        return;
+      }
 
       if (error instanceof Error && error.message.includes('token limit')) {
         res.status(429).json({ error: error.message });

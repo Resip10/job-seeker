@@ -13,7 +13,7 @@
     "type-check": "tsc --noEmit",
     "check-all": "npm run type-check && npm run format:check",
     "prepare": "husky",
-    "emulator": "firebase emulators:start --only functions",
+    "emulator": "firebase emulators:start --only functions,firestore",
     "emulator:all": "firebase emulators:start",
     "dev:full": "concurrently \"npm run dev\" \"npm run emulator\"",
     "dev:prod": "cross-env NEXT_PUBLIC_USE_PRODUCTION_FUNCTIONS=true npm run dev",
