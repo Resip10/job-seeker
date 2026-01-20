@@ -25,12 +25,7 @@ export const analyzeJobDescription = async (
     const useProductionFunctions =
       process.env.NEXT_PUBLIC_USE_PRODUCTION_FUNCTIONS === 'true';
     const isDevelopment = process.env.NODE_ENV === 'development';
-    const isLocalhost =
-      typeof window !== 'undefined' &&
-      (window.location.hostname === 'localhost' ||
-        window.location.hostname === '127.0.0.1');
-    const useEmulator =
-      (isDevelopment || isLocalhost) && !useProductionFunctions;
+    const useEmulator = isDevelopment && !useProductionFunctions;
 
     const functionUrl = useEmulator
       ? `http://127.0.0.1:5001/${projectId}/us-central1/analyzeJobDescriptionHttp`
