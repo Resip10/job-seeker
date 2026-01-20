@@ -69,3 +69,4 @@ storage.rules
 
 # Firebase debug files
 firebase-debug.log
+firestore-debug.log

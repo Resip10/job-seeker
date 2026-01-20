@@ -22,9 +22,14 @@ export const analyzeJobDescription = async (
   try {
     // Use HTTP function instead of callable function to avoid CORS issues
     const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
-    const functionUrl = `https://us-central1-${projectId}.cloudfunctions.net/analyzeJobDescriptionHttp`;
+    const useProductionFunctions =
+      process.env.NEXT_PUBLIC_USE_PRODUCTION_FUNCTIONS === 'true';
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    const useEmulator = isDevelopment && !useProductionFunctions;
 
-    console.log('🔧 Calling HTTP function:', functionUrl);
+    const functionUrl = useEmulator
+      ? `http://127.0.0.1:5001/${projectId}/us-central1/analyzeJobDescriptionHttp`
+      : `https://us-central1-${projectId}.cloudfunctions.net/analyzeJobDescriptionHttp`;
 
     const response = await fetch(functionUrl, {
       method: 'POST',
