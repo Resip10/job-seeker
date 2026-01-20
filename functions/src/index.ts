@@ -62,7 +62,15 @@ export const analyzeJobDescription = onCall(
       const jobDescription = await processJobInput(jobInput);
       const prompt = createJobAnalysisPrompt(jobDescription);
 
-      const genAI = new GoogleGenerativeAI(geminiApiKey.value());
+      const apiKey = geminiApiKey.value();
+      if (!apiKey) {
+        throw new HttpsError(
+          'failed-precondition',
+          'GEMINI_API_KEY is not configured. Set it via Firebase Secret Manager or functions/.secret.local.'
+        );
+      }
+
+      const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
       const processResponse = (text: string) => {
@@ -208,7 +216,17 @@ export const analyzeJobDescriptionHttp = onRequest(
       const jobDescription = await processJobInput(text);
       const prompt = createJobAnalysisPrompt(jobDescription);
 
-      const genAI = new GoogleGenerativeAI(geminiApiKey.value());
+      const apiKey = geminiApiKey.value();
+      if (!apiKey) {
+        res.status(500).json({
+          error:
+            'GEMINI_API_KEY is not configured. Set it via Firebase Secret Manager or functions/.secret.local.',
+        });
+
+        return;
+      }
+
+      const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
       const processResponse = (text: string) => {
