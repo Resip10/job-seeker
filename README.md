@@ -79,40 +79,13 @@ Experience the full application deployed on Vercel with Firebase backend integra
    NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
    ```
 
-4. **Set up Firebase Cloud Functions (for AI features)**
+4. **Run the development server**
 
    ```bash
-   cd functions
-   npm install
-   ```
-
-   Configure the Gemini API key secret:
-
-   ```bash
-   firebase functions:secrets:set GEMINI_API_KEY
-   ```
-
-   Deploy the functions:
-
-   ```bash
-   firebase deploy --only functions
-   ```
-
-   **Optional**: Use the automated deployment script:
-
-   ```bash
-   # For Windows PowerShell
-   .\scripts\deploy-token-tracking.ps1
-   ```
-
-5. **Run the development server**
-
-   ```bash
-   cd .. # Return to project root
    npm run dev
    ```
 
-6. **Open your browser**
+5. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
 ## 📜 Available Scripts
@@ -128,15 +101,6 @@ Experience the full application deployed on Vercel with Firebase backend integra
 | `npm run format:check` | Check if files are formatted correctly          |
 | `npm run type-check`   | Run TypeScript type checking                    |
 | `npm run check-all`    | Run type-check, lint, and format-check together |
-
-### Firebase Functions Scripts (run from `/functions` directory)
-
-| Command          | Description                          |
-| ---------------- | ------------------------------------ |
-| `npm run build`  | Build Cloud Functions for deployment |
-| `npm run dev`    | Start Functions development server   |
-| `npm run deploy` | Deploy functions to Firebase         |
-| `npm run logs`   | View Cloud Functions logs            |
 
 ## 🔧 Configuration
 
@@ -240,11 +204,6 @@ src/
 │   └── utils/              # Specialized utility modules
 └── types/                  # Global TypeScript type definitions
 
-functions/                  # Firebase Cloud Functions
-├── src/
-│   └── services/           # Cloud Functions services
-└── lib/                    # Compiled JavaScript output
-
 scripts/                    # Deployment and utility scripts
 ```
 
@@ -262,8 +221,6 @@ scripts/                    # Deployment and utility scripts
 2. Set up your Firebase project and configure environment variables
 3. Run the development server
 4. Open [http://localhost:3000](http://localhost:3000) in your browser
-
-For detailed setup instructions, see [TOKEN_TRACKING_SETUP.md](TOKEN_TRACKING_SETUP.md).
 
 ## 🤝 Contributing
 
